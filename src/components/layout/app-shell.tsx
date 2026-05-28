@@ -18,7 +18,7 @@ import { Button } from "@/components/ui/button";
 
 const NAV_ITEMS = [
   { name: 'Inicio', href: '/', icon: LayoutDashboard },
-  { name: 'Almacén', href: '/products', icon: Package },
+  { name: 'Stock', href: '/products', icon: Package },
   { name: 'Pedidos', href: '/orders', icon: ShoppingCart },
   { name: 'Análisis', href: '/analytics', icon: BarChart3 },
 ];
@@ -65,7 +65,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         <div className="fixed inset-0 z-[100] bg-background flex flex-col items-center justify-center">
           <div className="w-full max-w-[200px] flex flex-col items-center gap-6">
             <Logo className="w-16 h-16 text-primary animate-pulse" />
-            <div className="w-full space-y-2">
+            <div className="w-full space-y-2 px-6">
               <Progress value={loadingProgress} className="h-1 bg-muted" />
               <p className="text-[10px] font-black uppercase tracking-[0.4em] text-center text-primary/50">
                 MonsterShop Syncing
@@ -110,27 +110,34 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
       <div className="flex-1 flex flex-col min-w-0 pb-24 md:pb-0">
         <main className={cn(
-          "flex-1 p-6 md:p-12 max-w-6xl mx-auto w-full transition-all duration-500",
+          "flex-1 p-4 md:p-12 max-w-6xl mx-auto w-full transition-all duration-500",
           isLoading ? "opacity-0 scale-95" : "opacity-100 scale-100"
         )}>
           {children}
         </main>
 
         {/* Mobile Bottom Nav */}
-        <nav className="md:hidden fixed bottom-0 left-0 right-0 h-20 bg-background/80 backdrop-blur-xl border-t border-border z-50 flex items-center justify-around px-4">
+        <nav className="md:hidden fixed bottom-0 left-0 right-0 h-20 bg-background/90 backdrop-blur-xl border-t border-border z-50 flex items-center justify-around px-2">
           {NAV_ITEMS.map((item) => (
             <Link 
               key={item.name} 
               href={item.href}
               className={cn(
-                "flex flex-col items-center justify-center gap-1 transition-all",
-                pathname === item.href ? "text-primary scale-110" : "text-muted-foreground"
+                "flex flex-col items-center justify-center gap-1 transition-all flex-1 h-full",
+                pathname === item.href ? "text-primary scale-105" : "text-muted-foreground"
               )}
             >
-              <item.icon className="w-6 h-6" />
-              <span className="text-[10px] font-black uppercase tracking-tighter">{item.name}</span>
+              <item.icon className="w-5 h-5" />
+              <span className="text-[9px] font-black uppercase tracking-tighter">{item.name}</span>
             </Link>
           ))}
+          <button 
+            onClick={toggleTheme}
+            className="flex flex-col items-center justify-center gap-1 flex-1 h-full text-muted-foreground hover:text-primary transition-colors"
+          >
+            {isDark ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+            <span className="text-[9px] font-black uppercase tracking-tighter">Tema</span>
+          </button>
         </nav>
       </div>
     </div>
