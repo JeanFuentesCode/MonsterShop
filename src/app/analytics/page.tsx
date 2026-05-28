@@ -14,10 +14,9 @@ import {
   PieChart,
   Pie,
   Cell,
-  LineChart,
-  Line
 } from 'recharts';
 import { DollarSign, Package, TrendingUp, AlertCircle } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 export default function AnalyticsPage() {
   const { products, orders, isLoaded } = useComandaStore();
@@ -72,7 +71,7 @@ export default function AnalyticsPage() {
                   <XAxis dataKey="name" tick={{ fontSize: 10 }} axisLine={false} tickLine={false} />
                   <YAxis tick={{ fontSize: 10 }} axisLine={false} tickLine={false} />
                   <Tooltip 
-                    contentStyle={{ borderRadius: '1rem', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }}
+                    contentStyle={{ borderRadius: '1rem', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)', backgroundColor: 'hsl(var(--card))', color: 'hsl(var(--foreground))' }}
                     cursor={{ fill: 'hsl(var(--muted)/0.4)' }}
                   />
                   <Bar dataKey="total" fill="hsl(var(--primary))" radius={[6, 6, 0, 0]} />
