@@ -2,14 +2,14 @@
 "use client"
 
 import React, { useState } from 'react';
-import Link from 'next/link';
 import { Logo } from "@/components/ui/logo";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Mail, Lock, Eye, EyeOff, Fingerprint, Loader2 } from "lucide-react";
+import { Mail, Lock, Eye, EyeOff, User, UserPlus, ArrowLeft } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { cn } from "@/lib/utils";
 
 const GoogleIcon = () => (
   <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -27,137 +27,224 @@ const AppleIcon = () => (
 );
 
 export default function LoginPage() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [isRegistering, setIsRegistering] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [isBiometricLoading, setIsBiometricLoading] = useState(false);
   const { toast } = useToast();
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleAction = (e: React.FormEvent) => {
     e.preventDefault();
     toast({
-      title: "Iniciando sesión",
+      title: isRegistering ? "Creando cuenta" : "Iniciando sesión",
       description: "Conectando con MonsterShop Server...",
     });
   };
 
-  const handleBiometricLogin = () => {
-    setIsBiometricLoading(true);
-    // Simulación de autenticación biométrica
-    setTimeout(() => {
-      setIsBiometricLoading(false);
-      toast({
-        title: "Acceso biométrico detectado",
-        description: "Huella reconocida. Iniciando sesión...",
-      });
-    }, 1500);
+  const toggleMode = () => {
+    setIsRegistering(!isRegistering);
   };
 
   return (
-    <div className="min-h-screen bg-[#000000] flex flex-col items-center justify-center p-4 md:p-8">
-      <div className="w-full max-w-[400px] space-y-8">
-        <div className="flex flex-col items-center text-center space-y-4 mb-2">
-          <div className="p-4 bg-primary/5 rounded-[2.5rem] border border-primary/10 shadow-[0_0_30px_rgba(34,197,94,0.05)]">
+    <div className="min-h-screen bg-[#000000] flex flex-col items-center justify-center p-4 md:p-8 overflow-hidden">
+      <div className="w-full max-w-[420px] perspective-1000">
+        <div className="flex flex-col items-center text-center space-y-4 mb-8">
+          <div className="p-4 bg-primary/5 rounded-[2.5rem] border border-primary/10 shadow-[0_0_40px_rgba(34,197,94,0.05)]">
             <Logo className="w-14 h-14 text-primary" />
           </div>
           <h1 className="text-3xl font-black tracking-tighter uppercase text-white">MonsterShop</h1>
         </div>
 
-        <Card className="border-border/40 bg-card/30 backdrop-blur-3xl rounded-[2.5rem] shadow-2xl overflow-hidden">
-          <CardHeader className="pt-10 pb-4 text-center">
-            <CardTitle className="text-xl font-black uppercase text-foreground tracking-tight">
-              ¡Hola! <span className="text-primary">Identifícate</span>
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-6 pb-12 px-8">
-            <form onSubmit={handleLogin} className="space-y-5">
-              <div className="space-y-2">
-                <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Email Corporativo</Label>
-                <div className="relative group">
-                  <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
-                  <Input 
-                    type="email" 
-                    placeholder="nombre@monstershop.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="h-14 pl-12 rounded-2xl bg-background/50 border-border/50 focus:ring-primary text-sm transition-all"
-                  />
+        <div className={cn(
+          "relative transition-all duration-700 preserve-3d h-[600px]",
+          isRegistering ? "rotate-y-180" : ""
+        )}>
+          {/* LOGIN SIDE */}
+          <div className="absolute inset-0 backface-hidden">
+            <Card className="border-border/40 bg-card/30 backdrop-blur-3xl rounded-[2.5rem] shadow-2xl h-full flex flex-col">
+              <CardHeader className="pt-10 pb-4 text-center">
+                <CardTitle className="text-xl font-black uppercase text-foreground tracking-tight">
+                  ¡Hola! <span className="text-primary">Identifícate</span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-6 flex-1 overflow-y-auto px-8">
+                <form onSubmit={handleAction} className="space-y-5">
+                  <div className="space-y-2">
+                    <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Email Corporativo</Label>
+                    <div className="relative group">
+                      <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
+                      <Input 
+                        type="email" 
+                        placeholder="nombre@monstershop.com"
+                        className="h-14 pl-12 rounded-2xl bg-background/50 border-border/50 focus:ring-primary text-sm"
+                      />
+                    </div>
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Contraseña</Label>
+                    <div className="relative group">
+                      <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
+                      <Input 
+                        type={showPassword ? "text" : "password"}
+                        placeholder="••••••••"
+                        className="h-14 pl-12 pr-12 rounded-2xl bg-background/50 border-border/50 focus:ring-primary text-sm"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-primary transition-colors"
+                      >
+                        {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                      </button>
+                    </div>
+                    <div className="flex justify-end px-1">
+                      <button type="button" className="text-[9px] font-black text-primary uppercase hover:underline tracking-wider">¿Olvidaste tu contraseña?</button>
+                    </div>
+                  </div>
+
+                  <Button type="submit" className="w-full h-14 rounded-2xl bg-primary text-primary-foreground font-black uppercase tracking-widest text-xs shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all mt-4">
+                    Entrar ahora
+                  </Button>
+                </form>
+
+                <div className="relative py-4">
+                  <div className="absolute inset-0 flex items-center">
+                    <span className="w-full border-t border-border/50" />
+                  </div>
+                  <div className="relative flex justify-center text-[9px] uppercase font-black">
+                    <span className="bg-card px-4 text-muted-foreground tracking-[0.2em]">O continúa con</span>
+                  </div>
                 </div>
-              </div>
-              
-              <div className="space-y-2">
-                <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Contraseña</Label>
-                <div className="relative group">
-                  <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
-                  <Input 
-                    type={showPassword ? "text" : "password"}
-                    placeholder="••••••••"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="h-14 pl-12 pr-12 rounded-2xl bg-background/50 border-border/50 focus:ring-primary text-sm transition-all"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-primary transition-colors"
+
+                <div className="grid grid-cols-2 gap-4">
+                  <Button variant="outline" className="h-14 rounded-2xl border-border/50 bg-background/30 hover:bg-muted font-black text-[10px] uppercase gap-3 transition-all">
+                    <GoogleIcon />
+                    Google
+                  </Button>
+                  <Button variant="outline" className="h-14 rounded-2xl border-border/50 bg-background/30 hover:bg-muted font-black text-[10px] uppercase gap-3 transition-all">
+                    <AppleIcon />
+                    Apple
+                  </Button>
+                </div>
+
+                <div className="pt-4 text-center">
+                  <button 
+                    onClick={toggleMode}
+                    className="text-[10px] font-black uppercase text-muted-foreground hover:text-primary transition-colors tracking-widest"
                   >
-                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    ¿No tienes una cuenta? <span className="text-primary underline">Crea una ya</span>
                   </button>
                 </div>
-                <div className="flex justify-end px-1">
-                  <Link href="#" className="text-[9px] font-black text-primary uppercase hover:underline tracking-wider">¿Olvidaste tu contraseña?</Link>
-                </div>
-              </div>
+              </CardContent>
+            </Card>
+          </div>
 
-              <div className="flex flex-col gap-3 mt-6">
-                <Button type="submit" className="w-full h-14 rounded-2xl bg-primary text-primary-foreground font-black uppercase tracking-widest text-xs shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all">
-                  Entrar ahora
-                </Button>
-                
-                {/* Botón de Huella para móvil */}
-                <Button 
-                  type="button" 
-                  variant="outline"
-                  onClick={handleBiometricLogin}
-                  disabled={isBiometricLoading}
-                  className="w-full h-14 rounded-2xl border-primary/20 bg-primary/5 hover:bg-primary/10 font-black text-[10px] uppercase gap-3 transition-all active:scale-95"
+          {/* REGISTER SIDE */}
+          <div className="absolute inset-0 backface-hidden rotate-y-180">
+            <Card className="border-border/40 bg-card/30 backdrop-blur-3xl rounded-[2.5rem] shadow-2xl h-full flex flex-col">
+              <CardHeader className="pt-10 pb-4 text-center relative">
+                <button 
+                  onClick={toggleMode}
+                  className="absolute left-8 top-11 p-2 rounded-xl bg-muted/50 hover:bg-primary/20 text-muted-foreground hover:text-primary transition-all"
                 >
-                  {isBiometricLoading ? (
-                    <Loader2 className="w-5 h-5 animate-spin text-primary" />
-                  ) : (
-                    <Fingerprint className="w-5 h-5 text-primary" />
-                  )}
-                  {isBiometricLoading ? "Verificando..." : "Acceso Biométrico"}
-                </Button>
-              </div>
-            </form>
+                  <ArrowLeft className="w-4 h-4" />
+                </button>
+                <CardTitle className="text-xl font-black uppercase text-foreground tracking-tight">
+                  Nueva <span className="text-primary">Cuenta</span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4 flex-1 overflow-y-auto px-8 pb-10">
+                <form onSubmit={handleAction} className="space-y-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-1.5">
+                      <Label className="text-[9px] font-black uppercase tracking-widest text-muted-foreground ml-1">Nombre</Label>
+                      <div className="relative group">
+                        <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
+                        <Input 
+                          placeholder="Juan"
+                          className="h-12 pl-12 rounded-xl bg-background/50 border-border/50 focus:ring-primary text-sm"
+                        />
+                      </div>
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label className="text-[9px] font-black uppercase tracking-widest text-muted-foreground ml-1">Apellido</Label>
+                      <Input 
+                        placeholder="Pérez"
+                        className="h-12 px-4 rounded-xl bg-background/50 border-border/50 focus:ring-primary text-sm"
+                      />
+                    </div>
+                  </div>
 
-            <div className="relative py-4">
-              <div className="absolute inset-0 flex items-center">
-                <span className="w-full border-t border-border/50" />
-              </div>
-              <div className="relative flex justify-center text-[9px] uppercase font-black">
-                <span className="bg-card px-4 text-muted-foreground tracking-[0.2em]">O continúa con</span>
-              </div>
-            </div>
+                  <div className="space-y-1.5">
+                    <Label className="text-[9px] font-black uppercase tracking-widest text-muted-foreground ml-1">Email Corporativo</Label>
+                    <div className="relative group">
+                      <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
+                      <Input 
+                        type="email" 
+                        placeholder="nombre@monstershop.com"
+                        className="h-12 pl-12 rounded-xl bg-background/50 border-border/50 focus:ring-primary text-sm"
+                      />
+                    </div>
+                  </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <Button variant="outline" className="h-14 rounded-2xl border-border/50 bg-background/30 hover:bg-muted font-black text-[10px] uppercase gap-3 transition-all active:scale-95">
-                <GoogleIcon />
-                Google
-              </Button>
-              <Button variant="outline" className="h-14 rounded-2xl border-border/50 bg-background/30 hover:bg-muted font-black text-[10px] uppercase gap-3 transition-all active:scale-95">
-                <AppleIcon />
-                Apple
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
+                  <div className="space-y-1.5">
+                    <Label className="text-[9px] font-black uppercase tracking-widest text-muted-foreground ml-1">Contraseña</Label>
+                    <div className="relative group">
+                      <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
+                      <Input 
+                        type="password"
+                        placeholder="••••••••"
+                        className="h-12 pl-12 rounded-xl bg-background/50 border-border/50 focus:ring-primary text-sm"
+                      />
+                    </div>
+                  </div>
 
-        <p className="text-center text-[9px] text-muted-foreground font-black uppercase tracking-[0.4em] opacity-30">
+                  <div className="space-y-1.5">
+                    <Label className="text-[9px] font-black uppercase tracking-widest text-muted-foreground ml-1">Confirmar Contraseña</Label>
+                    <Input 
+                      type="password"
+                      placeholder="••••••••"
+                      className="h-12 px-4 rounded-xl bg-background/50 border-border/50 focus:ring-primary text-sm"
+                    />
+                  </div>
+
+                  <Button type="submit" className="w-full h-14 rounded-2xl bg-primary text-primary-foreground font-black uppercase tracking-widest text-xs shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all mt-4">
+                    <UserPlus className="w-4 h-4 mr-2" />
+                    Registrarme
+                  </Button>
+                </form>
+
+                <div className="pt-4 text-center">
+                  <button 
+                    onClick={toggleMode}
+                    className="text-[10px] font-black uppercase text-muted-foreground hover:text-primary transition-colors tracking-widest"
+                  >
+                    ¿Ya tienes cuenta? <span className="text-primary underline">Inicia sesión</span>
+                  </button>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+
+        <p className="text-center text-[9px] text-muted-foreground font-black uppercase tracking-[0.4em] opacity-30 mt-12">
           MonsterShop Industrial &copy; {new Date().getFullYear()}
         </p>
       </div>
+
+      <style jsx global>{`
+        .perspective-1000 {
+          perspective: 1000px;
+        }
+        .preserve-3d {
+          transform-style: preserve-3d;
+        }
+        .backface-hidden {
+          backface-visibility: hidden;
+        }
+        .rotate-y-180 {
+          transform: rotateY(180deg);
+        }
+      `}</style>
     </div>
   );
 }
