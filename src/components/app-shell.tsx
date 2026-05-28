@@ -35,7 +35,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     setIsLoading(true);
     // Animación de robot extendida para simular sincronización pesada
-    const timer = setTimeout(() => setIsLoading(false), 1500);
+    const timer = setTimeout(() => setIsLoading(false), 2500);
     return () => clearTimeout(timer);
   }, [pathname]);
 
@@ -64,7 +64,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       <aside className="hidden md:flex flex-col w-64 bg-card border-r border-border transition-all duration-300">
         <div className="p-8 h-24 flex items-center">
           <Link href="/" className="group">
-            <h1 className="font-black text-2xl tracking-tighter uppercase italic">
+            <h1 className="font-black text-2xl tracking-tighter uppercase italic text-foreground">
               Monster<span className="text-primary">Shop</span>
             </h1>
           </Link>
