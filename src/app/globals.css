@@ -6,12 +6,12 @@
   :root {
     --background: 0 0% 100%;
     --foreground: 224 71.4% 4.1%;
-    --card: 0 0% 100%;
+    --card: 0 0% 98%;
     --card-foreground: 224 71.4% 4.1%;
     --popover: 0 0% 100%;
     --popover-foreground: 224 71.4% 4.1%;
     --primary: 161 72% 35%;
-    --primary-foreground: 210 40% 98%;
+    --primary-foreground: 0 0% 100%;
     --secondary: 220 14.3% 95.9%;
     --secondary-foreground: 220.9 39.3% 11%;
     --muted: 220 14.3% 95.9%;
@@ -23,7 +23,7 @@
     --border: 220 13% 91%;
     --input: 220 13% 91%;
     --ring: 161 72% 35%;
-    --radius: 0.75rem;
+    --radius: 1rem;
   }
 
   .dark {
@@ -54,22 +54,26 @@
   body { @apply bg-background text-foreground antialiased selection:bg-primary/30; }
 }
 
-.glass { @apply bg-card/40 backdrop-blur-md border border-white/5; }
+.glass { @apply bg-card/50 backdrop-blur-md border border-border; }
 
 @keyframes robot-float {
   0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
+  50% { transform: translateY(-12px); }
 }
 
 .animate-robot {
   animation: robot-float 3s ease-in-out infinite;
 }
 
-@keyframes typing {
-  0%, 100% { opacity: 0; }
-  50% { opacity: 1; }
+@keyframes levitate {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
 }
 
-.animate-typing {
-  animation: typing 1s steps(2) infinite;
+.hover-levitate {
+  transition: transform 0.3s ease;
+}
+
+.group:hover .hover-levitate {
+  animation: levitate 1.5s ease-in-out infinite;
 }
