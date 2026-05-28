@@ -66,18 +66,18 @@ export default function OrdersPage() {
               </div>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="flex items-center gap-3 text-[10px] font-bold text-muted-foreground bg-muted/50 p-3 rounded-xl">
+              <div className="flex items-center gap-3 text-[10px] font-bold text-muted-foreground bg-muted p-3 rounded-xl">
                 <Hash className="w-3 h-3 text-primary" />
                 <span>{order.reference}</span>
                 <span className="ml-auto flex items-center gap-1">
                   <CalendarIcon className="w-3 h-3" />
-                  Pagar antes de: {order.dueDate}
+                  Límite: {order.dueDate}
                 </span>
               </div>
               
               <div className="flex justify-between items-center">
                 <div className="text-[10px] font-bold text-muted-foreground">
-                  Creado: {new Date(order.createdAt).toLocaleDateString()}
+                  {new Date(order.createdAt).toLocaleDateString()}
                 </div>
                 <div className="text-xl font-black text-primary">
                   ${order.totalAmount.toLocaleString()}
@@ -130,7 +130,7 @@ export default function OrdersPage() {
                 Registrar Pedido
               </Button>
             </DialogTrigger>
-            <DialogContent className="max-w-md rounded-3xl">
+            <DialogContent className="max-w-md rounded-3xl border-border bg-card">
               <DialogHeader>
                 <DialogTitle className="text-xl font-black uppercase">Nueva Orden</DialogTitle>
               </DialogHeader>
@@ -140,14 +140,14 @@ export default function OrdersPage() {
                   <Input value={newOrder.customer} onChange={e => setNewOrder({...newOrder, customer: e.target.value})} className="rounded-xl h-11" />
                 </div>
                 <div className="space-y-1">
-                  <Label className="text-[10px] font-black uppercase text-muted-foreground">Ref. Pago (Ej: Bancolombia #221)</Label>
+                  <Label className="text-[10px] font-black uppercase text-muted-foreground">Ref. Pago (Ej: Banco #001)</Label>
                   <Input value={newOrder.reference} onChange={e => setNewOrder({...newOrder, reference: e.target.value})} className="rounded-xl h-11" />
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   <div className="space-y-1">
                     <Label className="text-[10px] font-black uppercase text-muted-foreground">Producto</Label>
                     <select 
-                      className="w-full h-11 px-3 bg-muted rounded-xl text-sm border-none outline-none focus:ring-1 focus:ring-primary"
+                      className="w-full h-11 px-3 bg-muted rounded-xl text-sm border-none outline-none focus:ring-1 focus:ring-primary text-foreground"
                       onChange={e => setNewOrder({...newOrder, productId: e.target.value})}
                     >
                       <option value="">Seleccionar...</option>
@@ -162,12 +162,12 @@ export default function OrdersPage() {
                   </div>
                 </div>
                 <div className="space-y-1">
-                  <Label className="text-[10px] font-black uppercase text-muted-foreground">Fecha Límite de Pago</Label>
+                  <Label className="text-[10px] font-black uppercase text-muted-foreground">Fecha Límite</Label>
                   <Input type="date" value={newOrder.dueDate} onChange={e => setNewOrder({...newOrder, dueDate: e.target.value})} className="rounded-xl h-11" />
                 </div>
               </div>
               <DialogFooter>
-                <Button onClick={handleAdd} className="w-full bg-primary font-black h-12 rounded-2xl uppercase">CONFIRMAR PEDIDO</Button>
+                <Button onClick={handleAdd} className="w-full bg-primary text-primary-foreground font-black h-12 rounded-2xl uppercase">CONFIRMAR PEDIDO</Button>
               </DialogFooter>
             </DialogContent>
           </Dialog>
@@ -204,7 +204,7 @@ function StatusBadge({ status }: { status: OrderStatus }) {
   const config = styles[status];
   const Icon = config.icon;
   return (
-    <Badge className={cn("px-2 py-1 rounded-lg text-[9px] font-black gap-1 border", config.class)} variant="outline">
+    <Badge className={cn("px-2 py-1 rounded-lg text-[9px] font-black gap-1 border shadow-none", config.class)} variant="outline">
       <Icon className="w-3 h-3" />
       {config.label}
     </Badge>

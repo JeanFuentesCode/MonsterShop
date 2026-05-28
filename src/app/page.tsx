@@ -59,7 +59,7 @@ export default function Dashboard() {
             </div>
             <div className="space-y-2">
               {criticalStock.slice(0, 5).map(p => (
-                <div key={p.id} className="flex justify-between items-center bg-card/40 border border-border p-4 rounded-2xl group hover:border-primary/30 transition-all">
+                <div key={p.id} className="flex justify-between items-center bg-card border border-border p-4 rounded-2xl group hover:border-primary/30 transition-all shadow-sm">
                   <div className="flex items-center gap-3">
                     <div className="w-8 h-8 rounded-xl bg-muted flex items-center justify-center">
                       <Package className="w-4 h-4 text-muted-foreground" />
@@ -82,7 +82,7 @@ export default function Dashboard() {
             </div>
             <div className="space-y-2">
               {pendingOrders.slice(0, 5).map(o => (
-                <div key={o.id} className="flex justify-between items-center bg-card/40 border border-border p-4 rounded-2xl group hover:border-primary/30 transition-all">
+                <div key={o.id} className="flex justify-between items-center bg-card border border-border p-4 rounded-2xl group hover:border-primary/30 transition-all shadow-sm">
                   <div>
                     <p className="text-sm font-bold uppercase">{o.customerName}</p>
                     <p className="text-[9px] text-muted-foreground font-black uppercase">Vence: {o.dueDate}</p>
@@ -103,7 +103,7 @@ export default function Dashboard() {
 
 function StatCard({ label, value, icon: Icon, color }: any) {
   return (
-    <Card className="bg-card/40 border-border p-6 relative overflow-hidden group rounded-3xl">
+    <Card className="bg-card border-border p-6 relative overflow-hidden group rounded-3xl shadow-sm">
       <div className="flex items-center justify-between relative z-10">
         <div>
           <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground mb-2">{label}</p>
