@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, { useState, useEffect } from 'react';
@@ -8,7 +9,6 @@ import {
   Package, 
   ShoppingCart, 
   BarChart3, 
-  Settings, 
   LogOut,
   Menu,
   X,
@@ -42,7 +42,6 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
   const toggleTheme = () => setTheme(theme === 'dark' ? 'light' : 'dark');
 
-  // Skip AppShell for login and terms
   if (pathname === '/login' || pathname === '/terms') {
     return <>{children}</>;
   }
@@ -88,13 +87,12 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         </div>
       </aside>
 
-      {/* Main Content */}
       <main className="flex-1 flex flex-col min-w-0 overflow-hidden">
         {/* Header Mobile */}
         <header className="md:hidden flex items-center justify-between p-4 border-b border-border/50 bg-card/50 backdrop-blur-md sticky top-0 z-50">
           <div className="flex items-center gap-2">
             <Zap className="text-primary w-6 h-6 fill-current" />
-            <span className="text-lg font-black tracking-tighter italic">MONSTER</span>
+            <span className="text-lg font-black tracking-tighter italic uppercase">Monster</span>
           </div>
           <div className="flex gap-2">
             <Button variant="ghost" size="icon" onClick={toggleTheme} className="rounded-full">
@@ -106,16 +104,18 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           </div>
         </header>
 
-        {/* Content Area */}
         <div className="flex-1 overflow-y-auto p-4 md:p-8">
-          <div className="max-w-7xl mx-auto space-y-8">
+          <div className="max-w-7xl mx-auto">
             {children}
           </div>
         </div>
 
-        {/* Navigation Mobile Overlay */}
+        {/* Mobile Navigation Overlay */}
         {isMobileMenuOpen && (
-          <div className="md:hidden fixed inset-0 z-40 bg-background/95 backdrop-blur-lg flex flex-col p-8 pt-20">
+          <div className="md:hidden fixed inset-0 z-[100] bg-background/95 backdrop-blur-lg flex flex-col p-8 pt-20">
+            <Button variant="ghost" size="icon" onClick={() => setIsMobileMenuOpen(false)} className="absolute top-4 right-4 rounded-full">
+              <X />
+            </Button>
             <nav className="space-y-4">
               {navItems.map((item) => (
                 <Link key={item.href} href={item.href} onClick={() => setIsMobileMenuOpen(false)}>
@@ -128,9 +128,15 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                   </span>
                 </Link>
               ))}
-              <Button variant="destructive" className="w-full py-6 rounded-2xl text-lg font-bold mt-8" asChild>
-                <Link href="/login">Cerrar Sesión</Link>
-              </Button>
+              <div className="pt-8 space-y-4">
+                 <Button variant="outline" className="w-full py-6 rounded-2xl text-lg font-bold gap-3" onClick={toggleTheme}>
+                  {theme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+                  Modo {theme === 'dark' ? 'Claro' : 'Oscuro'}
+                </Button>
+                <Button variant="destructive" className="w-full py-6 rounded-2xl text-lg font-bold" asChild>
+                  <Link href="/login">Cerrar Sesión</Link>
+                </Button>
+              </div>
             </nav>
           </div>
         )}

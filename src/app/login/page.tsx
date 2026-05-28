@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, { useState } from 'react';
@@ -9,11 +10,8 @@ import {
   Eye, 
   EyeOff, 
   ArrowRight, 
-  Github, 
   Chrome,
-  Apple,
-  User,
-  Fingerprint
+  Apple
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -34,12 +32,12 @@ export default function LoginPage() {
 
       <div className="w-full max-w-md perspective-1000">
         <div className={cn(
-          "relative w-full transition-all duration-700 preserve-3d h-[650px]",
-          isRegistering ? "rotate-y-180 h-[820px]" : ""
+          "relative w-full transition-all duration-700 preserve-3d",
+          isRegistering ? "rotate-y-180 h-[800px]" : "h-[650px]"
         )}>
           
           {/* LOGIN SIDE */}
-          <div className="absolute inset-0 backface-hidden bg-card border border-border/50 rounded-[2.5rem] shadow-2xl p-8 flex flex-col">
+          <div className="absolute inset-0 backface-hidden bg-card border border-border/50 rounded-[2.5rem] shadow-2xl p-8 flex flex-col overflow-hidden">
             <div className="flex flex-col items-center text-center mb-8">
               <div className="w-14 h-14 bg-primary rounded-2xl flex items-center justify-center shadow-lg shadow-primary/20 mb-4">
                 <Zap className="text-primary-foreground w-8 h-8 fill-current" />
@@ -47,12 +45,12 @@ export default function LoginPage() {
               <h1 className="text-3xl font-black tracking-tighter uppercase italic">
                 ¡Hola! <span className="text-primary underline decoration-2 underline-offset-4">Identifícate</span>
               </h1>
-              <p className="text-muted-foreground text-sm mt-2">Bienvenido de nuevo a MonsterShop.</p>
+              <p className="text-muted-foreground text-sm mt-2 uppercase tracking-widest text-[10px] font-bold">Bienvenido de nuevo a MonsterShop.</p>
             </div>
 
             <form className="space-y-5 flex-1" onSubmit={(e) => { e.preventDefault(); window.location.href = '/'; }}>
               <div className="space-y-2">
-                <Label className="text-xs uppercase font-bold tracking-widest text-muted-foreground ml-1">Correo Electrónico</Label>
+                <Label className="text-[10px] uppercase font-bold tracking-widest text-muted-foreground ml-1">Correo Electrónico</Label>
                 <div className="relative group">
                   <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
                   <Input type="email" placeholder="nombre@empresa.com" className="pl-12 h-14 rounded-2xl bg-muted/30 border-border/50 focus:border-primary/50 transition-all" required />
@@ -61,8 +59,7 @@ export default function LoginPage() {
 
               <div className="space-y-2">
                 <div className="flex items-center justify-between ml-1">
-                  <Label className="text-xs uppercase font-bold tracking-widest text-muted-foreground">Contraseña</Label>
-                  <Link href="#" className="text-[10px] uppercase font-bold text-primary hover:underline">¿Olvidaste tu contraseña?</Link>
+                  <Label className="text-[10px] uppercase font-bold tracking-widest text-muted-foreground">Contraseña</Label>
                 </div>
                 <div className="relative group">
                   <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
@@ -80,6 +77,9 @@ export default function LoginPage() {
                     {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </button>
                 </div>
+                <div className="text-right">
+                  <Link href="#" className="text-[10px] uppercase font-bold text-primary hover:underline">¿Olvidaste tu contraseña?</Link>
+                </div>
               </div>
 
               <Button type="submit" className="w-full h-14 rounded-2xl font-black text-lg uppercase tracking-tight shadow-xl shadow-primary/20 group">
@@ -95,21 +95,14 @@ export default function LoginPage() {
 
               <div className="grid grid-cols-2 gap-4">
                 <Button variant="outline" className="h-14 rounded-2xl border-border/50 gap-3 font-bold bg-muted/20 hover:bg-muted/50">
-                  <svg className="w-5 h-5" viewBox="0 0 24 24">
-                    <path fill="#EA4335" d="M12 5.04c1.9 0 3.51.64 4.85 1.91l3.6-3.6C18.28 1.19 15.42 0 12 0 7.31 0 3.25 2.69 1.25 6.61l4.22 3.27C6.44 6.94 9.02 5.04 12 5.04z" />
-                    <path fill="#4285F4" d="M23.49 12.27c0-.8-.07-1.56-.19-2.3H12v4.35h6.44c-.28 1.47-1.1 2.71-2.35 3.55l3.65 2.84c2.13-1.96 3.35-4.85 3.35-8.44z" />
-                    <path fill="#FBBC05" d="M5.47 14.12c-.22-.66-.35-1.36-.35-2.12s.13-1.46.35-2.12L1.25 6.61C.45 8.19 0 9.97 0 12s.45 3.81 1.25 5.39l4.22-3.27z" />
-                    <path fill="#34A853" d="M12 24c3.24 0 5.95-1.07 7.94-2.91l-3.65-2.84c-1.1.74-2.51 1.17-4.29 1.17-3.28 0-6.06-2.21-7.05-5.18l-4.22 3.27C3.25 21.31 7.31 24 12 24z" />
-                  </svg>
-                  Google
+                  <Chrome className="w-5 h-5" /> Google
                 </Button>
                 <Button variant="outline" className="h-14 rounded-2xl border-border/50 gap-3 font-bold bg-muted/20 hover:bg-muted/50">
-                  <Apple className="w-5 h-5 fill-current" />
-                  Apple
+                  <Apple className="w-5 h-5 fill-current" /> Apple
                 </Button>
               </div>
 
-              <p className="text-center text-xs font-bold text-muted-foreground">
+              <p className="text-center text-[10px] font-bold text-muted-foreground uppercase tracking-widest mt-4">
                 ¿No tienes cuenta? <button onClick={() => setIsRegistering(true)} className="text-primary hover:underline">Crea una ya</button>
               </p>
             </div>
@@ -121,7 +114,7 @@ export default function LoginPage() {
               <h1 className="text-3xl font-black tracking-tighter uppercase italic">
                 Nueva <span className="text-primary underline decoration-2 underline-offset-4">Cuenta</span>
               </h1>
-              <p className="text-muted-foreground text-sm mt-2">Únete a la red MonsterShop.</p>
+              <p className="text-muted-foreground text-sm mt-2 uppercase tracking-widest text-[10px] font-bold">Únete a la red MonsterShop.</p>
             </div>
 
             <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); window.location.href = '/'; }}>
@@ -154,8 +147,8 @@ export default function LoginPage() {
               <div className="flex items-start space-x-3 py-2">
                 <Checkbox id="terms" checked={acceptedTerms} onCheckedChange={(val) => setAcceptedTerms(val === true)} className="mt-1 border-primary data-[state=checked]:bg-primary" />
                 <div className="grid gap-1.5 leading-none">
-                  <label htmlFor="terms" className="text-[10px] font-bold text-muted-foreground leading-normal">
-                    Acepto los <Link href="/terms" className="text-primary hover:underline">Términos y Condiciones</Link> y la política de privacidad de datos industriales.
+                  <label htmlFor="terms" className="text-[10px] font-bold text-muted-foreground leading-normal uppercase tracking-widest">
+                    Acepto los <Link href="/terms" className="text-primary hover:underline">Términos y Condiciones</Link>
                   </label>
                 </div>
               </div>
@@ -187,7 +180,7 @@ export default function LoginPage() {
                 </Button>
               </div>
 
-              <p className="text-center text-xs font-bold text-muted-foreground pb-4">
+              <p className="text-center text-[10px] font-bold text-muted-foreground uppercase tracking-widest pb-4 mt-2">
                 ¿Ya tienes cuenta? <button onClick={() => setIsRegistering(false)} className="text-primary hover:underline">Inicia sesión</button>
               </p>
             </div>

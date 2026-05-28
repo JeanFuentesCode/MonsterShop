@@ -1,3 +1,4 @@
+
 'use client';
 
 import React from 'react';
@@ -7,12 +8,12 @@ import { Button } from '@/components/ui/button';
 
 export default function TermsPage() {
   return (
-    <div className="min-h-screen bg-background text-foreground selection:bg-primary selection:text-primary-foreground">
+    <div className="min-h-screen bg-background text-foreground selection:bg-primary selection:text-primary-foreground dark">
       <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-md border-b border-border/50">
         <div className="max-w-4xl mx-auto px-6 h-16 flex items-center justify-between">
           <Link href="/login" className="flex items-center gap-2 group text-muted-foreground hover:text-primary transition-colors">
             <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
-            <span className="text-xs uppercase font-black tracking-widest">Volver</span>
+            <span className="text-[10px] uppercase font-black tracking-widest">Volver</span>
           </Link>
           <div className="flex items-center gap-2">
             <Zap className="text-primary w-5 h-5 fill-current" />
@@ -27,7 +28,7 @@ export default function TermsPage() {
             <div className="inline-flex items-center justify-center w-16 h-16 rounded-3xl bg-primary/10 border border-primary/20 mb-4">
               <Scale className="w-8 h-8 text-primary" />
             </div>
-            <h1 className="text-4xl md:text-6xl font-black tracking-tighter uppercase italic italic">
+            <h1 className="text-4xl md:text-6xl font-black tracking-tighter uppercase italic">
               Términos y <span className="text-primary">Condiciones</span>
             </h1>
             <p className="text-muted-foreground max-w-xl mx-auto uppercase tracking-widest text-[10px] font-bold">
@@ -58,7 +59,7 @@ export default function TermsPage() {
           </div>
 
           <div className="p-8 rounded-3xl bg-muted/50 border border-border/50 text-center space-y-6">
-            <p className="text-sm text-foreground font-bold">
+            <p className="text-sm text-foreground font-bold uppercase tracking-widest">
               ¿Tiene dudas sobre nuestras políticas industriales?
             </p>
             <Button className="rounded-2xl px-8 h-12 font-black uppercase tracking-tighter">
