@@ -1,13 +1,13 @@
 "use client"
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Logo } from "@/components/ui/logo";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Mail, Lock, Eye, EyeOff, User, UserPlus, ArrowLeft } from "lucide-react";
+import { Mail, Lock, Eye, EyeOff, UserPlus, ArrowLeft, Chrome } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import Link from 'next/link';
 import { cn } from "@/lib/utils";
@@ -30,13 +30,22 @@ const AppleIcon = () => (
 export default function LoginPage() {
   const [isRegistering, setIsRegistering] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [acceptedTerms, setAcceptedTerms] = useState(false);
   const { toast } = useToast();
 
   const handleAction = (e: React.FormEvent) => {
     e.preventDefault();
+    if (isRegistering && !acceptedTerms) {
+      toast({
+        variant: "destructive",
+        title: "Error legal",
+        description: "Debes aceptar los términos y condiciones para continuar.",
+      });
+      return;
+    }
     toast({
       title: isRegistering ? "Creando cuenta" : "Iniciando sesión",
-      description: "Conectando con MonsterShop Server...",
+      description: "Conectando con MonsterShop Cloud...",
     });
   };
 
@@ -44,18 +53,18 @@ export default function LoginPage() {
     <div className="space-y-4">
       <div className="relative py-2">
         <div className="absolute inset-0 flex items-center">
-          <span className="w-full border-t border-border/50" />
+          <span className="w-full border-t border-border" />
         </div>
         <div className="relative flex justify-center text-[9px] uppercase font-black">
-          <span className="bg-[#0f0f0f] px-4 text-muted-foreground tracking-[0.2em]">O continúa con</span>
+          <span className="bg-background px-4 text-muted-foreground tracking-[0.2em]">O continúa con</span>
         </div>
       </div>
       <div className="grid grid-cols-2 gap-4">
-        <Button variant="outline" className="h-12 rounded-xl border-border/50 bg-background/30 hover:bg-muted font-black text-[10px] uppercase gap-3">
+        <Button variant="outline" className="h-12 rounded-xl border-border bg-card hover:bg-muted font-black text-[10px] uppercase gap-3">
           <GoogleIcon />
           Google
         </Button>
-        <Button variant="outline" className="h-12 rounded-xl border-border/50 bg-background/30 hover:bg-muted font-black text-[10px] uppercase gap-3">
+        <Button variant="outline" className="h-12 rounded-xl border-border bg-card hover:bg-muted font-black text-[10px] uppercase gap-3">
           <AppleIcon />
           Apple
         </Button>
@@ -64,22 +73,22 @@ export default function LoginPage() {
   );
 
   return (
-    <div className="min-h-screen bg-[#000000] flex flex-col items-center justify-center p-4 md:p-8 overflow-hidden">
+    <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4 md:p-8 overflow-hidden transition-colors duration-300">
       <div className="w-full max-w-[440px] perspective-2000">
         <div className="flex flex-col items-center text-center space-y-4 mb-8">
           <div className="p-4 bg-primary/5 rounded-[2.5rem] border border-primary/10 shadow-[0_0_40px_rgba(34,197,94,0.05)]">
             <Logo className="w-14 h-14 text-primary" />
           </div>
-          <h1 className="text-3xl font-black tracking-tighter uppercase text-white">MonsterShop</h1>
+          <h1 className="text-3xl font-black tracking-tighter uppercase text-foreground">MonsterShop</h1>
         </div>
 
         <div className={cn(
           "relative transition-all duration-700 preserve-3d w-full",
-          isRegistering ? "rotate-y-180 h-[740px]" : "h-[620px]"
+          isRegistering ? "rotate-y-180 h-[760px]" : "h-[620px]"
         )}>
           {/* LOGIN SIDE */}
           <div className="absolute inset-0 backface-hidden">
-            <Card className="border-border/40 bg-[#0a0a0a] backdrop-blur-3xl rounded-[2.5rem] shadow-2xl h-full flex flex-col overflow-hidden">
+            <Card className="border-border bg-card backdrop-blur-3xl rounded-[2.5rem] shadow-2xl h-full flex flex-col overflow-hidden">
               <CardHeader className="pt-10 pb-4 text-center">
                 <CardTitle className="text-xl font-black uppercase text-foreground tracking-tight">
                   ¡Hola! <span className="text-primary">Identifícate</span>
@@ -94,7 +103,7 @@ export default function LoginPage() {
                       <Input 
                         type="email" 
                         placeholder="nombre@monstershop.com"
-                        className="h-14 pl-12 rounded-2xl bg-background/50 border-border/50 focus:ring-primary text-sm"
+                        className="h-14 pl-12 rounded-2xl bg-background border-border focus:ring-primary text-sm"
                       />
                     </div>
                   </div>
@@ -106,7 +115,7 @@ export default function LoginPage() {
                       <Input 
                         type={showPassword ? "text" : "password"}
                         placeholder="••••••••"
-                        className="h-14 pl-12 pr-12 rounded-2xl bg-background/50 border-border/50 focus:ring-primary text-sm"
+                        className="h-14 pl-12 pr-12 rounded-2xl bg-background border-border focus:ring-primary text-sm"
                       />
                       <button
                         type="button"
@@ -142,11 +151,11 @@ export default function LoginPage() {
 
           {/* REGISTER SIDE */}
           <div className="absolute inset-0 backface-hidden rotate-y-180">
-            <Card className="border-border/40 bg-[#0a0a0a] backdrop-blur-3xl rounded-[2.5rem] shadow-2xl h-full flex flex-col overflow-hidden">
+            <Card className="border-border bg-card backdrop-blur-3xl rounded-[2.5rem] shadow-2xl h-full flex flex-col overflow-hidden">
               <CardHeader className="pt-10 pb-4 text-center relative">
                 <button 
                   onClick={() => setIsRegistering(false)}
-                  className="absolute left-8 top-11 p-2 rounded-xl bg-muted/50 hover:bg-primary/20 text-muted-foreground hover:text-primary transition-all"
+                  className="absolute left-8 top-11 p-2 rounded-xl bg-muted hover:bg-primary/20 text-muted-foreground hover:text-primary transition-all"
                 >
                   <ArrowLeft className="w-4 h-4" />
                 </button>
@@ -159,37 +168,46 @@ export default function LoginPage() {
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-1.5">
                       <Label className="text-[9px] font-black uppercase tracking-widest text-muted-foreground ml-1">Nombre</Label>
-                      <Input placeholder="Juan" className="h-11 px-4 rounded-xl bg-background/50 border-border/50 text-sm" />
+                      <Input placeholder="Juan" className="h-11 px-4 rounded-xl bg-background border-border text-sm" />
                     </div>
                     <div className="space-y-1.5">
                       <Label className="text-[9px] font-black uppercase tracking-widest text-muted-foreground ml-1">Apellido</Label>
-                      <Input placeholder="Pérez" className="h-11 px-4 rounded-xl bg-background/50 border-border/50 text-sm" />
+                      <Input placeholder="Pérez" className="h-11 px-4 rounded-xl bg-background border-border text-sm" />
                     </div>
                   </div>
 
                   <div className="space-y-1.5">
                     <Label className="text-[9px] font-black uppercase tracking-widest text-muted-foreground ml-1">Email</Label>
-                    <Input type="email" placeholder="nombre@mail.com" className="h-11 px-4 rounded-xl bg-background/50 border-border/50 text-sm" />
+                    <Input type="email" placeholder="nombre@mail.com" className="h-11 px-4 rounded-xl bg-background border-border text-sm" />
                   </div>
 
                   <div className="space-y-1.5">
                     <Label className="text-[9px] font-black uppercase tracking-widest text-muted-foreground ml-1">Contraseña</Label>
-                    <Input type="password" placeholder="••••••••" className="h-11 px-4 rounded-xl bg-background/50 border-border/50 text-sm" />
+                    <Input type="password" placeholder="••••••••" className="h-11 px-4 rounded-xl bg-background border-border text-sm" />
                   </div>
 
                   <div className="space-y-1.5">
                     <Label className="text-[9px] font-black uppercase tracking-widest text-muted-foreground ml-1">Confirmar Contraseña</Label>
-                    <Input type="password" placeholder="••••••••" className="h-11 px-4 rounded-xl bg-background/50 border-border/50 text-sm" />
+                    <Input type="password" placeholder="••••••••" className="h-11 px-4 rounded-xl bg-background border-border text-sm" />
                   </div>
 
                   <div className="flex items-center space-x-2 pt-2">
-                    <Checkbox id="terms" className="border-border/50" />
+                    <Checkbox 
+                      id="terms" 
+                      className="border-border" 
+                      checked={acceptedTerms}
+                      onCheckedChange={(checked) => setAcceptedTerms(!!checked)}
+                    />
                     <label htmlFor="terms" className="text-[10px] font-medium leading-none text-muted-foreground">
                       Acepto los <Link href="/terms" className="text-primary underline">términos y condiciones</Link>
                     </label>
                   </div>
 
-                  <Button type="submit" className="w-full h-12 rounded-xl bg-primary text-primary-foreground font-black uppercase tracking-widest text-xs shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all">
+                  <Button 
+                    type="submit" 
+                    disabled={!acceptedTerms}
+                    className="w-full h-12 rounded-xl bg-primary text-primary-foreground font-black uppercase tracking-widest text-xs shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-50 disabled:grayscale disabled:hover:scale-100"
+                  >
                     <UserPlus className="w-4 h-4 mr-2" />
                     Registrarme
                   </Button>
