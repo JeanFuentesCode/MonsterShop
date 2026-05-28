@@ -1,99 +1,93 @@
+'use client';
 
-"use client"
-
-import React, { useEffect, useState } from 'react';
-import { ShieldCheck, FileText, Scale, Lock, ShieldAlert, ArrowLeft } from "lucide-react";
+import React from 'react';
 import Link from 'next/link';
-import { Button } from "@/components/ui/button";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { Zap, ArrowLeft, ShieldCheck, FileText, Lock, Scale } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 export default function TermsPage() {
-  const [isDark, setIsDark] = useState(true);
-
-  useEffect(() => {
-    const theme = localStorage.getItem('theme') || 'dark';
-    setIsDark(theme === 'dark');
-    document.documentElement.classList.toggle('dark', theme === 'dark');
-  }, []);
-
   return (
-    <div className="min-h-screen bg-background text-foreground transition-colors duration-300">
-      <div className="max-w-4xl mx-auto px-6 py-12 md:py-20 space-y-12">
-        <header className="space-y-6">
-          <Link href="/login">
-            <Button variant="ghost" className="gap-2 text-muted-foreground hover:text-primary p-0">
-              <ArrowLeft className="w-4 h-4" />
-              Volver al acceso
-            </Button>
+    <div className="min-h-screen bg-background text-foreground selection:bg-primary selection:text-primary-foreground">
+      <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-md border-b border-border/50">
+        <div className="max-w-4xl mx-auto px-6 h-16 flex items-center justify-between">
+          <Link href="/login" className="flex items-center gap-2 group text-muted-foreground hover:text-primary transition-colors">
+            <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
+            <span className="text-xs uppercase font-black tracking-widest">Volver</span>
           </Link>
-          <div className="space-y-4">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-[10px] font-black uppercase text-primary tracking-widest">
-              <ShieldCheck className="w-3 h-3" />
-              Documentación Legal Oficial
+          <div className="flex items-center gap-2">
+            <Zap className="text-primary w-5 h-5 fill-current" />
+            <span className="text-sm font-black tracking-tighter uppercase italic">MonsterShop</span>
+          </div>
+        </div>
+      </header>
+
+      <main className="max-w-4xl mx-auto px-6 py-12 md:py-20">
+        <div className="space-y-12">
+          <div className="text-center space-y-4">
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-3xl bg-primary/10 border border-primary/20 mb-4">
+              <Scale className="w-8 h-8 text-primary" />
             </div>
-            <h1 className="text-4xl md:text-6xl font-black uppercase tracking-tighter">Términos de Servicio</h1>
-            <p className="text-muted-foreground text-lg max-w-2xl font-medium">
-              Contrato de licencia para el uso de la plataforma industrial MonsterShop.
-              <span className="block text-sm mt-2 opacity-60 italic">Última actualización: Noviembre 2024</span>
+            <h1 className="text-4xl md:text-6xl font-black tracking-tighter uppercase italic italic">
+              Términos y <span className="text-primary">Condiciones</span>
+            </h1>
+            <p className="text-muted-foreground max-w-xl mx-auto uppercase tracking-widest text-[10px] font-bold">
+              Última actualización: 20 de mayo de 2024
             </p>
           </div>
-        </header>
 
-        <main className="grid gap-12">
-          <section className="space-y-4">
-            <div className="flex items-center gap-3 text-primary">
-              <FileText className="w-6 h-6" />
-              <h2 className="text-xl font-black uppercase tracking-tight">1. Propiedad Intelectual</h2>
-            </div>
-            <div className="prose prose-sm dark:prose-invert max-w-none text-muted-foreground leading-relaxed">
-              <p>
-                MonsterShop es una propiedad exclusiva de MonsterShop Corp. Todo el código fuente, diseño gráfico, algoritmos y bases de datos están protegidos por leyes internacionales de propiedad intelectual. No se permite la copia, modificación o distribución del software sin autorización expresa por escrito.
-              </p>
-            </div>
-          </section>
+          <div className="grid gap-12 text-sm leading-relaxed text-muted-foreground/80 font-medium">
+            <Section title="1. Introducción Legal" icon={FileText}>
+              Al acceder y utilizar el sistema de gestión MonsterShop, usted acepta cumplir con estos términos. Si no está de acuerdo con alguna parte, debe cesar el uso de la plataforma inmediatamente. Este es un contrato vinculante entre el usuario y MonsterShop Corporation.
+            </Section>
 
-          <section className="space-y-4">
-            <div className="flex items-center gap-3 text-primary">
-              <ShieldAlert className="w-6 h-6" />
-              <h2 className="text-xl font-black uppercase tracking-tight">2. Responsabilidad Operativa</h2>
-            </div>
-            <div className="prose prose-sm dark:prose-invert max-w-none text-muted-foreground leading-relaxed">
-              <p>
-                El usuario asume la responsabilidad total por la precisión de los datos de inventario y pedidos. MonsterShop Corp no se responsabiliza por discrepancias en almacén o pérdidas financieras derivadas del uso de la herramienta. El sistema se proporciona "tal cual" para apoyo a la gestión industrial.
-              </p>
-            </div>
-          </section>
+            <Section title="2. Uso de la Plataforma" icon={Zap}>
+              MonsterShop es una herramienta de uso industrial y profesional. El usuario se compromete a no utilizar el sistema para actividades ilícitas, fraude o manipulación de datos de inventario. Cualquier intento de ingeniería inversa o ataque cibernético resultará en la cancelación inmediata de la cuenta y acciones legales.
+            </Section>
 
-          <section className="space-y-4">
-            <div className="flex items-center gap-3 text-primary">
-              <Lock className="w-6 h-6" />
-              <h2 className="text-xl font-black uppercase tracking-tight">3. Seguridad de Datos</h2>
-            </div>
-            <div className="prose prose-sm dark:prose-invert max-w-none text-muted-foreground leading-relaxed">
-              <p>
-                Implementamos estándares de encriptación corporativos para proteger la información del usuario. Sin embargo, el usuario es responsable de mantener la confidencialidad de sus credenciales de acceso. Cualquier actividad realizada bajo su cuenta se considerará de su autoría.
-              </p>
-            </div>
-          </section>
+            <Section title="3. Protección de Datos" icon={Lock}>
+              La seguridad de su inventario y datos de ventas es nuestra prioridad. MonsterShop utiliza cifrado de grado militar para proteger la información. Usted es responsable de mantener la confidencialidad de sus credenciales de acceso y de cualquier actividad que ocurra bajo su cuenta.
+            </Section>
 
-          <section className="space-y-4">
-            <div className="flex items-center gap-3 text-primary">
-              <Scale className="w-6 h-6" />
-              <h2 className="text-xl font-black uppercase tracking-tight">4. Jurisdicción</h2>
-            </div>
-            <div className="prose prose-sm dark:prose-invert max-w-none text-muted-foreground leading-relaxed">
-              <p>
-                Cualquier disputa legal relacionada con el uso de MonsterShop se resolverá bajo la jurisdicción de las cortes comerciales competentes del domicilio fiscal de MonsterShop Corp, renunciando el usuario a cualquier otro fuero que pudiera corresponderle.
-              </p>
-            </div>
-          </section>
-        </main>
+            <Section title="4. Propiedad Intelectual" icon={ShieldCheck}>
+              Todo el software, diseño, logotipos y algoritmos de optimización de MonsterShop son propiedad exclusiva de la empresa. No se permite la reproducción total o parcial del código ni de la estética visual de la plataforma sin autorización expresa por escrito.
+            </Section>
 
-        <footer className="pt-20 border-t border-border/50 text-center">
-          <p className="text-[10px] font-black uppercase text-muted-foreground tracking-[0.4em] opacity-40">
-            MonsterShop Legal Division &copy; {new Date().getFullYear()}
-          </p>
-        </footer>
+            <Section title="5. Limitación de Responsabilidad" icon={Scale}>
+              MonsterShop no se hace responsable por pérdidas económicas derivadas de errores en la carga de datos por parte del usuario o interrupciones temporales del servicio fuera de nuestro control razonable. El sistema se proporciona "tal cual".
+            </Section>
+          </div>
+
+          <div className="p-8 rounded-3xl bg-muted/50 border border-border/50 text-center space-y-6">
+            <p className="text-sm text-foreground font-bold">
+              ¿Tiene dudas sobre nuestras políticas industriales?
+            </p>
+            <Button className="rounded-2xl px-8 h-12 font-black uppercase tracking-tighter">
+              Contactar Soporte Técnico
+            </Button>
+          </div>
+        </div>
+      </main>
+
+      <footer className="py-12 border-t border-border/50 text-center">
+        <p className="text-[10px] uppercase font-bold tracking-widest text-muted-foreground">
+          MonsterShop © 2024 - Sistema de Gestión de Alto Rendimiento
+        </p>
+      </footer>
+    </div>
+  );
+}
+
+function Section({ title, children, icon: Icon }: { title: string, children: React.ReactNode, icon: any }) {
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center gap-3">
+        <div className="w-8 h-8 rounded-xl bg-muted flex items-center justify-center">
+          <Icon className="w-4 h-4 text-primary" />
+        </div>
+        <h2 className="text-lg font-black uppercase italic text-foreground">{title}</h2>
+      </div>
+      <div className="pl-11">
+        {children}
       </div>
     </div>
   );

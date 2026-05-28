@@ -1,212 +1,183 @@
-"use client"
+'use client';
 
 import React, { useState } from 'react';
-import { AppShell } from "@/components/layout/app-shell";
-import { useComandaStore, OrderStatus } from "@/lib/store";
-import { Plus, Hash, CheckCircle2, Clock, XCircle, Calendar as CalendarIcon } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { cn } from "@/lib/utils";
+import { AppShell } from '@/components/app-shell';
+import { Button } from '@/components/ui/button';
+import { 
+  Plus, 
+  Search, 
+  Filter, 
+  MoreVertical, 
+  CheckCircle2, 
+  Clock, 
+  XCircle,
+  Calendar,
+  User,
+  Hash
+} from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Badge } from '@/components/ui/badge';
+import { 
+  Dialog, 
+  DialogContent, 
+  DialogHeader, 
+  DialogTitle, 
+  DialogTrigger,
+  DialogFooter 
+} from '@/components/ui/dialog';
+import { Label } from '@/components/ui/label';
+
+const initialOrders = [
+  { id: 'ORD-001', client: 'Taller Mecánico Alpha', amount: 450.00, date: '2024-03-20', status: 'pending', quantity: 5 },
+  { id: 'ORD-002', client: 'Ferretería Central', amount: 1200.00, date: '2024-03-15', status: 'paid', quantity: 12 },
+  { id: 'ORD-003', client: 'Industrias Pesadas', amount: 890.50, date: '2024-03-22', status: 'canceled', quantity: 2 },
+  { id: 'ORD-004', client: 'Constructor J.P.', amount: 2100.00, date: '2024-03-25', status: 'pending', quantity: 25 },
+];
 
 export default function OrdersPage() {
-  const { orders, products, addOrder, updateOrderStatus, isLoaded } = useComandaStore();
-  const [isOpen, setIsOpen] = useState(false);
-  const [newOrder, setNewOrder] = useState({
-    customer: '',
-    reference: '',
-    productId: '',
-    qty: 1,
-    dueDate: new Date().toISOString().split('T')[0]
-  });
+  const [orders, setOrders] = useState(initialOrders);
+  const [activeTab, setActiveTab] = useState('all');
 
-  if (!isLoaded) return null;
-
-  const handleAdd = () => {
-    const product = products.find(p => p.id === newOrder.productId);
-    if (!product || !newOrder.customer) return;
-
-    addOrder({
-      id: `MS-${Date.now().toString().slice(-4)}`,
-      customerName: newOrder.customer,
-      reference: newOrder.reference || 'S/REF',
-      items: [{ productId: product.id, quantity: newOrder.qty, priceAtSale: product.price }],
-      totalAmount: product.price * newOrder.qty,
-      status: 'pending',
-      createdAt: new Date().toISOString(),
-      dueDate: newOrder.dueDate
-    });
-    setIsOpen(false);
-  };
-
-  const OrderList = ({ statusFilter }: { statusFilter: OrderStatus }) => {
-    const filtered = orders.filter(o => o.status === statusFilter);
-    
-    if (filtered.length === 0) return (
-      <div className="py-20 text-center opacity-30">
-        <p className="text-xs font-black uppercase tracking-widest">Sin registros en esta categoría</p>
-      </div>
-    );
-
-    return (
-      <div className="grid gap-4 md:grid-cols-2">
-        {filtered.map(order => (
-          <Card key={order.id} className="bg-card border-border rounded-2xl overflow-hidden shadow-sm group">
-            <CardHeader className="pb-2">
-              <div className="flex justify-between items-start">
-                <div className="space-y-1">
-                  <span className="text-[10px] font-mono font-black text-primary/60 uppercase">ORD {order.id}</span>
-                  <CardTitle className="text-lg font-black uppercase">{order.customerName}</CardTitle>
-                </div>
-                <StatusBadge status={order.status} />
-              </div>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex items-center gap-3 text-[10px] font-bold text-muted-foreground bg-muted p-3 rounded-xl">
-                <Hash className="w-3 h-3 text-primary" />
-                <span>{order.reference}</span>
-                <span className="ml-auto flex items-center gap-1">
-                  <CalendarIcon className="w-3 h-3" />
-                  Límite: {order.dueDate}
-                </span>
-              </div>
-              
-              <div className="flex justify-between items-center">
-                <div className="text-[10px] font-bold text-muted-foreground">
-                  {new Date(order.createdAt).toLocaleDateString()}
-                </div>
-                <div className="text-xl font-black text-primary">
-                  ${order.totalAmount.toLocaleString()}
-                </div>
-              </div>
-
-              <div className="flex gap-2 pt-2">
-                {order.status === 'pending' && (
-                  <>
-                    <Button 
-                      className="flex-1 h-10 text-xs font-black uppercase bg-primary text-primary-foreground rounded-xl"
-                      onClick={() => updateOrderStatus(order.id, 'paid')}
-                    >
-                      PAGADO
-                    </Button>
-                    <Button 
-                      variant="outline"
-                      className="h-10 text-xs font-black uppercase border-destructive text-destructive hover:bg-destructive hover:text-white rounded-xl"
-                      onClick={() => updateOrderStatus(order.id, 'canceled')}
-                    >
-                      CANCELAR
-                    </Button>
-                  </>
-                )}
-                {order.status === 'paid' && (
-                  <p className="text-[10px] font-black uppercase text-primary/80 italic">
-                    Completado el {new Date(order.paidAt!).toLocaleDateString()}
-                  </p>
-                )}
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-    );
-  };
+  const filteredOrders = activeTab === 'all' 
+    ? orders 
+    : orders.filter(o => o.status === activeTab);
 
   return (
     <AppShell>
       <div className="space-y-8">
-        <header className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
           <div>
-            <h2 className="text-3xl font-black uppercase tracking-tighter">Gestión de Pedidos</h2>
-            <p className="text-muted-foreground text-sm font-medium">Control industrial de flujo de pagos.</p>
+            <h1 className="text-4xl font-black tracking-tight flex items-center gap-3">
+              <span className="text-primary">/</span> PEDIDOS
+            </h1>
+            <p className="text-muted-foreground mt-1">Gestión de cobros y facturación industrial.</p>
           </div>
-          <Dialog open={isOpen} onOpenChange={setIsOpen}>
+          
+          <Dialog>
             <DialogTrigger asChild>
-              <Button className="bg-primary text-primary-foreground font-black uppercase h-12 px-8 rounded-2xl shadow-lg shadow-primary/20">
-                <Plus className="w-4 h-4 mr-2" />
-                Registrar Pedido
+              <Button className="rounded-xl h-12 px-6 font-bold shadow-lg shadow-primary/20 gap-2">
+                <Plus className="w-5 h-5" /> Nuevo Pedido
               </Button>
             </DialogTrigger>
-            <DialogContent className="max-w-md rounded-3xl border-border bg-card">
+            <DialogContent className="bg-card border-border/50 max-w-md rounded-3xl">
               <DialogHeader>
-                <DialogTitle className="text-xl font-black uppercase">Nueva Orden</DialogTitle>
+                <DialogTitle className="text-2xl font-black italic tracking-tight uppercase">Registrar Pedido</DialogTitle>
               </DialogHeader>
-              <div className="space-y-4 py-4">
-                <div className="space-y-1">
-                  <Label className="text-[10px] font-black uppercase text-muted-foreground">Cliente</Label>
-                  <Input value={newOrder.customer} onChange={e => setNewOrder({...newOrder, customer: e.target.value})} className="rounded-xl h-11" />
+              <div className="space-y-6 py-4">
+                <div className="space-y-2">
+                  <Label className="text-xs uppercase font-bold tracking-widest text-muted-foreground">Nombre del Cliente</Label>
+                  <Input placeholder="Ej. Juan Pérez" className="rounded-xl bg-muted/50" />
                 </div>
-                <div className="space-y-1">
-                  <Label className="text-[10px] font-black uppercase text-muted-foreground">Ref. Pago (Ej: Banco #001)</Label>
-                  <Input value={newOrder.reference} onChange={e => setNewOrder({...newOrder, reference: e.target.value})} className="rounded-xl h-11" />
-                </div>
-                <div className="grid grid-cols-2 gap-3">
-                  <div className="space-y-1">
-                    <Label className="text-[10px] font-black uppercase text-muted-foreground">Producto</Label>
-                    <select 
-                      className="w-full h-11 px-3 bg-muted rounded-xl text-sm border-none outline-none focus:ring-1 focus:ring-primary text-foreground"
-                      onChange={e => setNewOrder({...newOrder, productId: e.target.value})}
-                    >
-                      <option value="">Seleccionar...</option>
-                      {products.map(p => (
-                        <option key={p.id} value={p.id}>{p.name} (${p.price})</option>
-                      ))}
-                    </select>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label className="text-xs uppercase font-bold tracking-widest text-muted-foreground">Fecha a Pagar</Label>
+                    <Input type="date" className="rounded-xl bg-muted/50" />
                   </div>
-                  <div className="space-y-1">
-                    <Label className="text-[10px] font-black uppercase text-muted-foreground">Cantidad</Label>
-                    <Input type="number" value={newOrder.qty} onChange={e => setNewOrder({...newOrder, qty: Number(e.target.value)})} className="rounded-xl h-11" />
+                  <div className="space-y-2">
+                    <Label className="text-xs uppercase font-bold tracking-widest text-muted-foreground">Cantidad</Label>
+                    <Input type="number" placeholder="0" className="rounded-xl bg-muted/50" />
                   </div>
                 </div>
-                <div className="space-y-1">
-                  <Label className="text-[10px] font-black uppercase text-muted-foreground">Fecha Límite</Label>
-                  <Input type="date" value={newOrder.dueDate} onChange={e => setNewOrder({...newOrder, dueDate: e.target.value})} className="rounded-xl h-11" />
+                <div className="space-y-2">
+                  <Label className="text-xs uppercase font-bold tracking-widest text-muted-foreground">Monto Total ($)</Label>
+                  <Input type="number" step="0.01" placeholder="0.00" className="rounded-xl bg-muted/50" />
                 </div>
               </div>
               <DialogFooter>
-                <Button onClick={handleAdd} className="w-full bg-primary text-primary-foreground font-black h-12 rounded-2xl uppercase">CONFIRMAR PEDIDO</Button>
+                <Button className="w-full h-12 rounded-xl font-bold text-lg uppercase tracking-tighter">Guardar Pedido</Button>
               </DialogFooter>
             </DialogContent>
           </Dialog>
-        </header>
+        </div>
 
-        <Tabs defaultValue="pending" className="space-y-6">
-          <TabsList className="bg-muted p-1 rounded-2xl w-full max-w-md">
-            <TabsTrigger value="pending" className="rounded-xl flex-1 font-black text-[10px] uppercase">Pendientes</TabsTrigger>
-            <TabsTrigger value="paid" className="rounded-xl flex-1 font-black text-[10px] uppercase">Pagados</TabsTrigger>
-            <TabsTrigger value="canceled" className="rounded-xl flex-1 font-black text-[10px] uppercase">Cancelados</TabsTrigger>
-          </TabsList>
-          
-          <TabsContent value="pending" className="mt-0 focus:outline-none">
-            <OrderList statusFilter="pending" />
-          </TabsContent>
-          <TabsContent value="paid" className="mt-0 focus:outline-none">
-            <OrderList statusFilter="paid" />
-          </TabsContent>
-          <TabsContent value="canceled" className="mt-0 focus:outline-none">
-            <OrderList statusFilter="canceled" />
-          </TabsContent>
-        </Tabs>
+        <div className="flex flex-col gap-6">
+          <div className="flex flex-col md:flex-row gap-4 items-center">
+            <div className="relative flex-1 w-full">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground w-4 h-4" />
+              <Input placeholder="Buscar cliente o ID de pedido..." className="pl-12 h-12 rounded-2xl bg-card border-border/50" />
+            </div>
+            <Button variant="outline" className="h-12 rounded-2xl gap-2 border-border/50 px-6 font-bold">
+              <Filter className="w-4 h-4" /> Filtros
+            </Button>
+          </div>
+
+          <Tabs defaultValue="all" className="w-full" onValueChange={setActiveTab}>
+            <TabsList className="bg-muted/50 p-1 h-14 rounded-2xl border border-border/20 grid grid-cols-4 w-full md:max-w-xl">
+              <TabsTrigger value="all" className="rounded-xl data-[state=active]:bg-background data-[state=active]:shadow-sm font-bold">Todos</TabsTrigger>
+              <TabsTrigger value="pending" className="rounded-xl data-[state=active]:bg-yellow-500/10 data-[state=active]:text-yellow-500 font-bold">Pendientes</TabsTrigger>
+              <TabsTrigger value="paid" className="rounded-xl data-[state=active]:bg-primary/10 data-[state=active]:text-primary font-bold">Pagados</TabsTrigger>
+              <TabsTrigger value="canceled" className="rounded-xl data-[state=active]:bg-red-500/10 data-[state=active]:text-red-500 font-bold">Cancelados</TabsTrigger>
+            </TabsList>
+
+            <TabsContent value={activeTab} className="mt-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+                {filteredOrders.map((order) => (
+                  <OrderCard key={order.id} order={order} />
+                ))}
+              </div>
+            </TabsContent>
+          </Tabs>
+        </div>
       </div>
     </AppShell>
   );
 }
 
-function StatusBadge({ status }: { status: OrderStatus }) {
-  const styles = {
-    pending: { label: 'PENDIENTE', icon: Clock, class: 'bg-yellow-500/10 text-yellow-600 border-yellow-500/20' },
-    paid: { label: 'PAGADO', icon: CheckCircle2, class: 'bg-primary/10 text-primary border-primary/20' },
-    canceled: { label: 'CANCELADO', icon: XCircle, class: 'bg-destructive/10 text-destructive border-destructive/20' },
-  };
-  const config = styles[status];
-  const Icon = config.icon;
+function OrderCard({ order }: { order: any }) {
+  const statusStyles = {
+    paid: { color: 'text-primary bg-primary/10', icon: CheckCircle2, label: 'Pagado' },
+    pending: { color: 'text-yellow-500 bg-yellow-500/10', icon: Clock, label: 'Pendiente' },
+    canceled: { color: 'text-red-500 bg-red-500/10', icon: XCircle, label: 'Cancelado' },
+  }[order.status as 'paid' | 'pending' | 'canceled'];
+
+  const StatusIcon = statusStyles.icon;
+
   return (
-    <Badge className={cn("px-2 py-1 rounded-lg text-[9px] font-black gap-1 border shadow-none", config.class)} variant="outline">
-      <Icon className="w-3 h-3" />
-      {config.label}
-    </Badge>
+    <Card className="border-none bg-card/50 hover:bg-card transition-all shadow-lg rounded-3xl overflow-hidden group">
+      <div className="p-6 space-y-4">
+        <div className="flex justify-between items-start">
+          <Badge className={`${statusStyles.color} border-none px-3 py-1 rounded-full font-bold uppercase text-[10px] tracking-widest`}>
+            <StatusIcon className="w-3 h-3 mr-1" /> {statusStyles.label}
+          </Badge>
+          <Button variant="ghost" size="icon" className="rounded-full h-8 w-8">
+            <MoreVertical className="w-4 h-4" />
+          </Button>
+        </div>
+
+        <div className="space-y-1">
+          <div className="flex items-center gap-2 text-muted-foreground">
+            <Hash className="w-3 h-3" />
+            <span className="text-[10px] font-bold tracking-widest uppercase">{order.id}</span>
+          </div>
+          <h3 className="text-xl font-black truncate group-hover:text-primary transition-colors">{order.client}</h3>
+        </div>
+
+        <div className="grid grid-cols-2 gap-4 py-2 border-y border-border/20">
+          <div className="space-y-1">
+            <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-widest flex items-center gap-1">
+              <Calendar className="w-3 h-3" /> Fecha Pago
+            </p>
+            <p className="text-sm font-bold">{order.date}</p>
+          </div>
+          <div className="space-y-1 text-right">
+            <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-widest">Cantidad</p>
+            <p className="text-sm font-bold">{order.quantity} pzas</p>
+          </div>
+        </div>
+
+        <div className="flex items-end justify-between pt-2">
+          <div>
+            <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-widest">Total</p>
+            <p className="text-2xl font-black text-foreground">${order.amount.toFixed(2)}</p>
+          </div>
+          {order.status === 'pending' && (
+            <Button size="sm" className="rounded-xl font-bold bg-primary/20 text-primary hover:bg-primary hover:text-primary-foreground transition-all">
+              Marcar Pagado
+            </Button>
+          )}
+        </div>
+      </div>
+    </Card>
   );
 }
