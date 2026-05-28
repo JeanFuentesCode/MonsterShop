@@ -1,3 +1,4 @@
+
 "use client"
 
 import { AppShell } from "@/components/layout/app-shell";
@@ -6,9 +7,11 @@ import {
   Package, 
   CreditCard, 
   AlertCircle,
-  TrendingUp
+  TrendingUp,
+  ArrowRight
 } from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
+import Link from 'next/link';
 
 export default function Dashboard() {
   const { products, orders, isLoaded } = useComandaStore();
@@ -21,27 +24,27 @@ export default function Dashboard() {
 
   return (
     <AppShell>
-      <div className="space-y-8">
-        <div>
-          <h2 className="text-3xl font-bold tracking-tight">Panel de Control</h2>
-          <p className="text-muted-foreground">Resumen operativo de MonsterShop.</p>
-        </div>
+      <div className="space-y-10">
+        <header>
+          <h2 className="text-4xl font-black tracking-tighter uppercase italic mb-1">Resumen Operativo</h2>
+          <p className="text-muted-foreground text-sm font-medium">Control en tiempo real de MonsterShop.</p>
+        </header>
 
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          <SummaryCard 
-            label="Ventas Cobradas" 
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <StatCard 
+            label="Cobrado" 
             value={`$${totalRevenue.toLocaleString()}`} 
             icon={TrendingUp} 
             color="text-primary"
           />
-          <SummaryCard 
-            label="Pedidos Pendientes" 
+          <StatCard 
+            label="Pendientes" 
             value={pendingOrders.toString()} 
             icon={CreditCard} 
             color="text-yellow-500"
           />
-          <SummaryCard 
-            label="Alertas Stock" 
+          <StatCard 
+            label="Stock Crítico" 
             value={lowStockCount.toString()} 
             icon={AlertCircle} 
             color={lowStockCount > 0 ? "text-destructive" : "text-primary"}
@@ -49,56 +52,61 @@ export default function Dashboard() {
         </div>
 
         <div className="grid gap-6 md:grid-cols-2">
-          <Card className="bg-white/[0.02] border-white/10 p-6">
-            <h3 className="font-semibold mb-4 flex items-center gap-2">
-              <Package className="w-4 h-4" />
-              Estado de Inventario
-            </h3>
-            <div className="space-y-4">
-              {products.slice(0, 5).map(p => (
-                <div key={p.id} className="flex justify-between items-center text-sm">
-                  <span className="text-muted-foreground">{p.name}</span>
-                  <span className={p.stock <= p.minStock ? "text-destructive font-bold" : "text-white"}>
+          <section className="space-y-4">
+            <div className="flex items-center justify-between">
+              <h3 className="text-xs font-black uppercase tracking-widest text-muted-foreground">Alertas de Stock</h3>
+              <Link href="/products" className="text-[10px] text-primary hover:underline flex items-center gap-1 font-bold">VER TODO <ArrowRight className="w-2 h-2"/></Link>
+            </div>
+            <div className="space-y-2">
+              {products.slice(0, 4).map(p => (
+                <div key={p.id} className="flex justify-between items-center bg-white/[0.03] border border-white/5 p-4 rounded-xl">
+                  <span className="text-sm font-bold">{p.name}</span>
+                  <span className={p.stock <= p.minStock ? "text-destructive font-black" : "text-primary font-black"}>
                     {p.stock} U.
                   </span>
                 </div>
               ))}
-              {products.length === 0 && <p className="text-muted-foreground italic text-xs">Sin productos registrados.</p>}
+              {products.length === 0 && <p className="text-muted-foreground italic text-xs text-center py-8">No hay productos registrados.</p>}
             </div>
-          </Card>
+          </section>
 
-          <Card className="bg-white/[0.02] border-white/10 p-6">
-            <h3 className="font-semibold mb-4">Últimos Pedidos</h3>
-            <div className="space-y-4">
-              {orders.slice(0, 5).map(o => (
-                <div key={o.id} className="flex justify-between items-center text-sm">
+          <section className="space-y-4">
+            <div className="flex items-center justify-between">
+              <h3 className="text-xs font-black uppercase tracking-widest text-muted-foreground">Últimos Pedidos</h3>
+              <Link href="/orders" className="text-[10px] text-primary hover:underline flex items-center gap-1 font-bold">VER TODO <ArrowRight className="w-2 h-2"/></Link>
+            </div>
+            <div className="space-y-2">
+              {orders.slice(0, 4).map(o => (
+                <div key={o.id} className="flex justify-between items-center bg-white/[0.03] border border-white/5 p-4 rounded-xl">
                   <div>
-                    <p className="font-medium">{o.customerName}</p>
-                    <p className="text-[10px] text-muted-foreground uppercase">{o.reference}</p>
+                    <p className="text-sm font-bold">{o.customerName}</p>
+                    <p className="text-[9px] text-muted-foreground uppercase font-black">{o.reference || 'Sin Ref'}</p>
                   </div>
-                  <span className={o.status === 'paid' ? "text-primary" : "text-yellow-500"}>
+                  <span className={o.status === 'paid' ? "text-primary font-black" : "text-yellow-500 font-black"}>
                     ${o.totalAmount.toLocaleString()}
                   </span>
                 </div>
               ))}
-              {orders.length === 0 && <p className="text-muted-foreground italic text-xs">Sin pedidos recientes.</p>}
+              {orders.length === 0 && <p className="text-muted-foreground italic text-xs text-center py-8">No hay pedidos recientes.</p>}
             </div>
-          </Card>
+          </section>
         </div>
       </div>
     </AppShell>
   );
 }
 
-function SummaryCard({ label, value, icon: Icon, color }: any) {
+function StatCard({ label, value, icon: Icon, color }: any) {
   return (
-    <Card className="bg-white/[0.02] border-white/10 p-6 overflow-hidden relative">
-      <div className="flex items-center justify-between">
+    <Card className="bg-white/[0.02] border-white/5 p-6 relative overflow-hidden group">
+      <div className="flex items-center justify-between relative z-10">
         <div>
-          <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-1">{label}</p>
+          <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground mb-2">{label}</p>
           <p className="text-3xl font-black">{value}</p>
         </div>
-        <Icon className={cn("w-8 h-8 opacity-20", color)} />
+        <div className={cn("p-3 rounded-xl bg-white/5 transition-transform group-hover:scale-110", color)}>
+          <Icon className="w-6 h-6" />
+        </div>
       </div>
     </Card>
   );
