@@ -10,7 +10,10 @@ import {
   AlertCircle,
   TrendingDown,
   TrendingUp,
-  Package2
+  Package2,
+  Filter,
+  Download,
+  Barcode
 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import {
@@ -22,13 +25,15 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from '@/components/ui/badge';
+import { Card } from '@/components/ui/card';
+import { cn } from '@/lib/utils';
 
 const initialStock = [
-  { id: 1, name: 'Motor Industrial 400W', sku: 'MOT-400-X', stock: 2, price: 125.50, status: 'low' },
-  { id: 2, name: 'Filtro Aire XL', sku: 'FLT-XL-02', stock: 45, price: 12.90, status: 'ok' },
-  { id: 3, name: 'Aceite Sintético V5', sku: 'OIL-SY-V5', stock: 12, price: 45.00, status: 'low' },
-  { id: 4, name: 'Bujía Premium Iridium', sku: 'SPK-IR-01', stock: 120, price: 8.50, status: 'ok' },
-  { id: 5, name: 'Cinturón Transmisión', sku: 'BLT-TR-44', stock: 0, price: 32.00, status: 'out' },
+  { id: 1, name: 'Motor Industrial 400W', sku: 'MTR-X400-ALPHA', stock: 2, price: 1250.50, status: 'critical' },
+  { id: 2, name: 'Filtro Aire XL Industrial', sku: 'FLT-XL-2024', stock: 45, price: 112.90, status: 'stable' },
+  { id: 3, name: 'Aceite Sintético V5-PRO', sku: 'OIL-V5-SYNTH', stock: 12, price: 450.00, status: 'low' },
+  { id: 4, name: 'Bujía Iridium Premium', sku: 'SPK-IRID-P1', stock: 120, price: 28.50, status: 'stable' },
+  { id: 5, name: 'Cinturón Transmisión L4', sku: 'BLT-TR-L4-01', stock: 0, price: 320.00, status: 'out' },
 ];
 
 export default function StockPage() {
@@ -36,62 +41,75 @@ export default function StockPage() {
 
   return (
     <AppShell>
-      <div className="space-y-8">
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+      <div className="space-y-12">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-8">
           <div>
-            <h1 className="text-4xl font-black tracking-tight flex items-center gap-3">
-              <span className="text-primary">/</span> INVENTARIO
+            <h1 className="text-5xl md:text-7xl font-black tracking-tighter uppercase italic leading-none">
+              Inven<span className="text-primary">tario</span>
             </h1>
-            <p className="text-muted-foreground mt-1">Control de suministros y materias primas.</p>
+            <p className="text-muted-foreground mt-3 font-bold uppercase tracking-[0.4em] text-xs">Gestión de Activos y Suministros</p>
           </div>
-          <Button className="rounded-xl h-12 px-6 font-bold shadow-lg shadow-primary/20 gap-2">
-            <Plus className="w-5 h-5" /> Añadir Producto
+          <Button className="rounded-[1.5rem] h-16 px-10 font-black text-lg shadow-[0_15px_30px_rgba(34,197,94,0.2)] uppercase tracking-widest gap-4 hover:scale-[1.02] transition-all">
+            <Plus className="w-6 h-6" /> Añadir Activo
           </Button>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <CardMini label="Total SKU" value="142" icon={Package2} />
-          <CardMini label="Bajo Stock" value="8" icon={TrendingDown} color="text-yellow-500" />
-          <CardMini label="Sin Stock" value="2" icon={AlertCircle} color="text-red-500" />
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <CardMini label="SKUs Activos" value="1,242" icon={Barcode} />
+          <CardMini label="Alertas Críticas" value="08" icon={TrendingDown} color="text-yellow-500" />
+          <CardMini label="Déficit Total" value="02" icon={AlertCircle} color="text-red-500" />
         </div>
 
-        <div className="bg-card rounded-[2rem] border border-border/50 shadow-xl overflow-hidden">
-          <div className="p-6 border-b border-border/50 flex flex-col md:flex-row gap-4 items-center justify-between">
-            <div className="relative w-full md:w-96">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground w-4 h-4" />
-              <Input placeholder="Buscar por SKU o nombre..." className="pl-12 h-12 rounded-2xl bg-muted/20 border-border/50" />
+        <Card className="border-none glass rounded-[3rem] overflow-hidden">
+          <div className="p-8 border-b border-white/5 flex flex-col md:flex-row gap-6 items-center justify-between bg-white/[0.01]">
+            <div className="relative w-full md:w-[450px] group">
+              <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-muted-foreground w-5 h-5 group-focus-within:text-primary transition-colors" />
+              <Input placeholder="Buscar por SKU, Nombre o Categoría..." className="pl-16 h-16 rounded-[1.5rem] bg-white/[0.03] border-white/5 text-lg font-bold" />
             </div>
-            <div className="flex gap-2">
-              <Button variant="outline" className="h-12 rounded-xl font-bold">Exportar CSV</Button>
-              <Button variant="outline" className="h-12 rounded-xl font-bold">Filtros Avanzados</Button>
+            <div className="flex gap-4 w-full md:w-auto">
+              <Button variant="outline" className="flex-1 md:flex-none h-16 rounded-2xl gap-3 font-black uppercase tracking-widest border-white/5 hover:bg-white/5">
+                <Download className="w-5 h-5" /> CSV
+              </Button>
+              <Button variant="outline" className="flex-1 md:flex-none h-16 rounded-2xl gap-3 font-black uppercase tracking-widest border-white/5 hover:bg-white/5">
+                <Filter className="w-5 h-5" /> Filtros
+              </Button>
             </div>
           </div>
 
           <div className="overflow-x-auto">
             <Table>
-              <TableHeader className="bg-muted/30">
-                <TableRow className="border-border/50">
-                  <TableHead className="font-bold text-xs uppercase tracking-widest h-14 pl-8">Producto</TableHead>
-                  <TableHead className="font-bold text-xs uppercase tracking-widest h-14">SKU</TableHead>
-                  <TableHead className="font-bold text-xs uppercase tracking-widest h-14">Stock</TableHead>
-                  <TableHead className="font-bold text-xs uppercase tracking-widest h-14 text-right">Precio</TableHead>
-                  <TableHead className="font-bold text-xs uppercase tracking-widest h-14 text-center">Estado</TableHead>
-                  <TableHead className="h-14 pr-8"></TableHead>
+              <TableHeader className="bg-white/[0.02]">
+                <TableRow className="border-white/5 h-20">
+                  <TableHead className="font-black text-xs uppercase tracking-[0.2em] pl-10 text-muted-foreground">Producto / Descripción</TableHead>
+                  <TableHead className="font-black text-xs uppercase tracking-[0.2em] text-muted-foreground">SKU Identificador</TableHead>
+                  <TableHead className="font-black text-xs uppercase tracking-[0.2em] text-muted-foreground">Cantidad</TableHead>
+                  <TableHead className="font-black text-xs uppercase tracking-[0.2em] text-right text-muted-foreground">Valuación ($)</TableHead>
+                  <TableHead className="font-black text-xs uppercase tracking-[0.2em] text-center text-muted-foreground">Estado Red</TableHead>
+                  <TableHead className="pr-10"></TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {items.map((item) => (
-                  <TableRow key={item.id} className="border-border/50 hover:bg-muted/20 transition-colors">
-                    <TableCell className="font-bold pl-8 py-6">{item.name}</TableCell>
-                    <TableCell className="text-muted-foreground font-mono text-xs">{item.sku}</TableCell>
-                    <TableCell className="font-black text-lg">{item.stock}</TableCell>
-                    <TableCell className="text-right font-bold">${item.price.toFixed(2)}</TableCell>
+                  <TableRow key={item.id} className="border-white/5 hover:bg-white/[0.03] transition-all group">
+                    <TableCell className="font-black text-xl italic uppercase tracking-tighter pl-10 py-8 group-hover:text-primary transition-colors">
+                      {item.name}
+                    </TableCell>
+                    <TableCell className="font-mono text-sm text-muted-foreground tracking-widest uppercase">
+                      {item.sku}
+                    </TableCell>
+                    <TableCell>
+                      <span className="text-3xl font-black italic">{item.stock}</span>
+                      <span className="text-[10px] text-muted-foreground font-bold ml-2 uppercase">Unid.</span>
+                    </TableCell>
+                    <TableCell className="text-right font-black text-xl italic">
+                      ${item.price.toLocaleString()}
+                    </TableCell>
                     <TableCell className="text-center">
                       <StockBadge status={item.status} />
                     </TableCell>
-                    <TableCell className="text-right pr-8">
-                      <Button variant="ghost" size="icon" className="rounded-full">
-                        <MoreHorizontal className="w-4 h-4" />
+                    <TableCell className="text-right pr-10">
+                      <Button variant="ghost" size="icon" className="rounded-2xl w-12 h-12 bg-white/5 hover:bg-primary hover:text-black transition-all">
+                        <MoreHorizontal className="w-5 h-5" />
                       </Button>
                     </TableCell>
                   </TableRow>
@@ -99,7 +117,7 @@ export default function StockPage() {
               </TableBody>
             </Table>
           </div>
-        </div>
+        </Card>
       </div>
     </AppShell>
   );
@@ -107,13 +125,13 @@ export default function StockPage() {
 
 function CardMini({ label, value, icon: Icon, color = "text-primary" }: any) {
   return (
-    <div className="bg-card/50 p-6 rounded-3xl border border-border/50 flex items-center justify-between">
+    <div className="glass p-8 rounded-[2.5rem] border-white/5 flex items-center justify-between group hover:border-primary/30 transition-all">
       <div>
-        <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-1">{label}</p>
-        <p className="text-3xl font-black">{value}</p>
+        <p className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground mb-2">{label}</p>
+        <p className="text-4xl font-black italic tracking-tighter">{value}</p>
       </div>
-      <div className={cn("p-4 rounded-2xl bg-muted", color)}>
-        <Icon className="w-5 h-5" />
+      <div className={cn("p-5 rounded-2xl bg-white/5 group-hover:scale-110 transition-transform", color)}>
+        <Icon className="w-8 h-8" />
       </div>
     </div>
   );
@@ -121,13 +139,14 @@ function CardMini({ label, value, icon: Icon, color = "text-primary" }: any) {
 
 function StockBadge({ status }: { status: string }) {
   const configs = {
-    ok: { label: 'Saludable', color: 'bg-primary/10 text-primary border-primary/20' },
-    low: { label: 'Bajo Stock', color: 'bg-yellow-500/10 text-yellow-500 border-yellow-500/20' },
-    out: { label: 'Agotado', color: 'bg-red-500/10 text-red-500 border-red-500/20' },
-  }[status as 'ok' | 'low' | 'out'];
+    stable: { label: 'SALUDABLE', color: 'bg-primary/10 text-primary border-primary/20' },
+    low: { label: 'BAJO STOCK', color: 'bg-yellow-500/10 text-yellow-500 border-yellow-500/20' },
+    critical: { label: 'CRÍTICO', color: 'bg-red-500/10 text-red-500 border-red-500/20' },
+    out: { label: 'AGOTADO', color: 'bg-red-500/20 text-red-500 border-red-500/40' },
+  }[status as 'stable' | 'low' | 'critical' | 'out'];
 
   return (
-    <Badge className={cn("border px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-tighter", configs.color)}>
+    <Badge className={cn("border px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-[0.2em]", configs.color)}>
       {configs.label}
     </Badge>
   );
