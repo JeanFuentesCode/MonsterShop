@@ -1,4 +1,3 @@
-
 "use client"
 
 import React, { useState, useEffect } from 'react';
@@ -35,6 +34,7 @@ export default function LoginPage() {
   const { toast } = useToast();
 
   useEffect(() => {
+    // Forzar modo oscuro al cargar si no hay preferencia guardada
     const theme = localStorage.getItem('theme') || 'dark';
     document.documentElement.classList.toggle('dark', theme === 'dark');
   }, []);
