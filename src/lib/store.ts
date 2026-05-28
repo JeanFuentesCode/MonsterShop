@@ -12,7 +12,7 @@ export type Product = {
   category: string;
 };
 
-export type OrderStatus = 'pending' | 'paid';
+export type OrderStatus = 'pending' | 'paid' | 'canceled';
 
 export type Order = {
   id: string;
@@ -22,6 +22,7 @@ export type Order = {
   totalAmount: number;
   status: OrderStatus;
   createdAt: string;
+  dueDate: string;
   paidAt?: string;
 };
 
@@ -32,19 +33,7 @@ export type Category = {
 
 const INITIAL_CATEGORIES: Category[] = [
   { id: '1', name: 'General' },
-  { id: '2', name: 'Premium' },
-];
-
-const INITIAL_PRODUCTS: Product[] = [
-  { 
-    id: '1', 
-    name: 'Producto Demo A', 
-    description: 'Descripción básica', 
-    price: 1500, 
-    stock: 10, 
-    minStock: 3, 
-    category: '1'
-  }
+  { id: '2', name: 'Industrial' },
 ];
 
 export function useComandaStore() {
@@ -54,11 +43,11 @@ export function useComandaStore() {
   const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
-    const savedProducts = localStorage.getItem('ms_products');
-    const savedCategories = localStorage.getItem('ms_categories');
-    const savedOrders = localStorage.getItem('ms_orders');
+    const savedProducts = localStorage.getItem('ms_products_v2');
+    const savedCategories = localStorage.getItem('ms_categories_v2');
+    const savedOrders = localStorage.getItem('ms_orders_v2');
 
-    setProducts(savedProducts ? JSON.parse(savedProducts) : INITIAL_PRODUCTS);
+    setProducts(savedProducts ? JSON.parse(savedProducts) : []);
     setCategories(savedCategories ? JSON.parse(savedCategories) : INITIAL_CATEGORIES);
     setOrders(savedOrders ? JSON.parse(savedOrders) : []);
     setIsLoaded(true);
@@ -66,29 +55,34 @@ export function useComandaStore() {
 
   useEffect(() => {
     if (isLoaded) {
-      localStorage.setItem('ms_products', JSON.stringify(products));
-      localStorage.setItem('ms_categories', JSON.stringify(categories));
-      localStorage.setItem('ms_orders', JSON.stringify(orders));
+      localStorage.setItem('ms_products_v2', JSON.stringify(products));
+      localStorage.setItem('ms_categories_v2', JSON.stringify(categories));
+      localStorage.setItem('ms_orders_v2', JSON.stringify(orders));
     }
   }, [products, categories, orders, isLoaded]);
 
   const addProduct = (p: Product) => setProducts([...products, p]);
-  const updateProduct = (p: Product) => setProducts(products.map(old => old.id === p.id ? p : old));
   const deleteProduct = (id: string) => setProducts(products.filter(p => p.id !== id));
-
+  
   const addOrder = (o: Order) => {
-    setOrders([...orders, o]);
+    setOrders([o, ...orders]);
+    // Actualizar stock
     o.items.forEach(item => {
-      const product = products.find(p => p.id === item.productId);
-      if (product) {
-        updateProduct({ ...product, stock: Math.max(0, product.stock - item.quantity) });
-      }
+      setProducts(prev => prev.map(p => 
+        p.id === item.productId ? { ...p, stock: Math.max(0, p.stock - item.quantity) } : p
+      ));
     });
   };
 
   const updateOrderStatus = (orderId: string, status: OrderStatus) => {
-    setOrders(orders.map(o => {
+    setOrders(prev => prev.map(o => {
       if (o.id === orderId) {
+        // Si se cancela, devolvemos el stock
+        if (status === 'canceled' && o.status !== 'canceled') {
+          o.items.forEach(item => {
+            setProducts(curr => curr.map(p => p.id === item.productId ? { ...p, stock: p.stock + item.quantity } : p));
+          });
+        }
         return {
           ...o,
           status,
@@ -104,7 +98,6 @@ export function useComandaStore() {
     categories,
     orders,
     addProduct,
-    updateProduct,
     deleteProduct,
     addOrder,
     updateOrderStatus,

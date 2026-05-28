@@ -11,117 +11,119 @@ import {
   CartesianGrid, 
   Tooltip, 
   ResponsiveContainer,
-  Cell,
   PieChart,
-  Pie
+  Pie,
+  Cell,
+  LineChart,
+  Line
 } from 'recharts';
+import { DollarSign, Package, TrendingUp, AlertCircle } from "lucide-react";
 
 export default function AnalyticsPage() {
   const { products, orders, isLoaded } = useComandaStore();
 
   if (!isLoaded) return null;
 
-  // Mock data for charts
-  const salesByMonth = [
-    { name: 'Ene', total: 4000 },
-    { name: 'Feb', total: 3000 },
-    { name: 'Mar', total: 2000 },
-    { name: 'Abr', total: 2780 },
-    { name: 'May', total: 1890 },
-    { name: 'Jun', total: 2390 },
-    { name: 'Jul', total: 3490 },
+  const totalRevenue = orders.filter(o => o.status === 'paid').reduce((acc, o) => acc + o.totalAmount, 0);
+  const pendingRevenue = orders.filter(o => o.status === 'pending').reduce((acc, o) => acc + o.totalAmount, 0);
+  const lowStock = products.filter(p => p.stock <= p.minStock).length;
+
+  // Datos para gráfico de barras (Ingresos por mes - simulado)
+  const salesData = [
+    { name: 'Ene', total: totalRevenue * 0.1 },
+    { name: 'Feb', total: totalRevenue * 0.2 },
+    { name: 'Mar', total: totalRevenue * 0.4 },
+    { name: 'Abr', total: totalRevenue * 0.3 },
   ];
 
-  const categoryShare = [
-    { name: 'Pastelería', value: 400 },
-    { name: 'Snacks', value: 300 },
-    { name: 'Bebidas', value: 300 },
+  // Datos para Pie Chart
+  const statusData = [
+    { name: 'Pagado', value: orders.filter(o => o.status === 'paid').length },
+    { name: 'Pendiente', value: orders.filter(o => o.status === 'pending').length },
+    { name: 'Cancelado', value: orders.filter(o => o.status === 'canceled').length },
   ];
 
-  const COLORS = ['#51A329', '#CEEB47', '#1A1C19'];
+  const COLORS = ['#22c55e', '#eab308', '#ef4444'];
 
   return (
     <AppShell>
-      <div className="space-y-6 max-w-7xl mx-auto">
-        <h2 className="text-3xl font-bold tracking-tight">Análisis de Ventas</h2>
-        
+      <div className="space-y-8">
+        <header>
+          <h2 className="text-3xl font-black uppercase tracking-tighter">Análisis de Operaciones</h2>
+          <p className="text-muted-foreground text-sm font-medium">Métricas clave de MonsterShop en tiempo real.</p>
+        </header>
+
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <AnalyticCard label="Ingresos Reales" value={`$${totalRevenue.toLocaleString()}`} icon={DollarSign} color="text-primary" />
+          <AnalyticCard label="Por Cobrar" value={`$${pendingRevenue.toLocaleString()}`} icon={TrendingUp} color="text-yellow-500" />
+          <AnalyticCard label="Items en Stock" value={products.length.toString()} icon={Package} color="text-blue-500" />
+          <AnalyticCard label="Puntos Críticos" value={lowStock.toString()} icon={AlertCircle} color="text-destructive" />
+        </div>
+
         <div className="grid gap-6 md:grid-cols-2">
-          <Card>
+          <Card className="bg-card/50 rounded-3xl overflow-hidden border-border shadow-sm">
             <CardHeader>
-              <CardTitle>Ingresos Mensuales</CardTitle>
+              <CardTitle className="text-xs font-black uppercase tracking-widest text-muted-foreground">Flujo de Ventas</CardTitle>
             </CardHeader>
-            <CardContent className="h-[350px]">
+            <CardContent className="h-[300px]">
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={salesByMonth}>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--muted))" />
-                  <XAxis dataKey="name" axisLine={false} tickLine={false} />
-                  <YAxis axisLine={false} tickLine={false} />
+                <BarChart data={salesData}>
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" />
+                  <XAxis dataKey="name" tick={{ fontSize: 10 }} axisLine={false} tickLine={false} />
+                  <YAxis tick={{ fontSize: 10 }} axisLine={false} tickLine={false} />
                   <Tooltip 
-                    contentStyle={{ backgroundColor: 'hsl(var(--card))', border: '1px solid hsl(var(--border))' }}
-                    cursor={{ fill: 'hsl(var(--accent)/0.1)' }}
+                    contentStyle={{ borderRadius: '1rem', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }}
+                    cursor={{ fill: 'hsl(var(--muted)/0.4)' }}
                   />
-                  <Bar dataKey="total" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
+                  <Bar dataKey="total" fill="hsl(var(--primary))" radius={[6, 6, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="bg-card/50 rounded-3xl overflow-hidden border-border shadow-sm">
             <CardHeader>
-              <CardTitle>Ventas por Categoría</CardTitle>
+              <CardTitle className="text-xs font-black uppercase tracking-widest text-muted-foreground">Distribución de Órdenes</CardTitle>
             </CardHeader>
-            <CardContent className="h-[350px] flex items-center justify-center">
+            <CardContent className="h-[300px] flex items-center justify-center">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
-                    data={categoryShare}
+                    data={statusData}
                     cx="50%"
                     cy="50%"
                     innerRadius={60}
-                    outerRadius={100}
-                    paddingAngle={5}
+                    outerRadius={90}
+                    paddingAngle={8}
                     dataKey="value"
                   >
-                    {categoryShare.map((entry, index) => (
+                    {statusData.map((entry, index) => (
                       <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                     ))}
                   </Pie>
                   <Tooltip />
                 </PieChart>
               </ResponsiveContainer>
-              <div className="absolute flex flex-col items-center justify-center">
-                 <span className="text-2xl font-bold">100%</span>
-                 <span className="text-xs text-muted-foreground">Distribución</span>
-              </div>
             </CardContent>
           </Card>
         </div>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Top Productos</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {products.slice(0, 3).map((p, i) => (
-                <div key={p.id} className="flex items-center gap-4">
-                  <div className="w-8 h-8 rounded bg-primary/10 flex items-center justify-center font-bold text-primary">
-                    #{i + 1}
-                  </div>
-                  <div className="flex-1">
-                    <div className="font-medium">{p.name}</div>
-                    <div className="text-xs text-muted-foreground">{p.category}</div>
-                  </div>
-                  <div className="text-right">
-                    <div className="font-bold">${p.price.toLocaleString()}</div>
-                    <div className="text-xs text-primary">{Math.floor(Math.random() * 50) + 10} vendidos</div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
       </div>
     </AppShell>
+  );
+}
+
+function AnalyticCard({ label, value, icon: Icon, color }: any) {
+  return (
+    <Card className="bg-card/40 border-border rounded-3xl p-6 relative overflow-hidden group">
+      <div className="flex items-center justify-between relative z-10">
+        <div className="space-y-1">
+          <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">{label}</p>
+          <p className="text-2xl font-black">{value}</p>
+        </div>
+        <div className={cn("p-3 rounded-2xl bg-muted transition-transform group-hover:scale-110", color)}>
+          <Icon className="w-5 h-5" />
+        </div>
+      </div>
+    </Card>
   );
 }
