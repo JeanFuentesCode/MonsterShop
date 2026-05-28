@@ -4,7 +4,6 @@ import { AppShell } from "@/components/layout/app-shell";
 import { useComandaStore } from "@/lib/store";
 import { 
   TrendingUp, 
-  Users, 
   CreditCard, 
   AlertTriangle,
   ArrowUpRight,
@@ -14,11 +13,10 @@ import {
   Filter
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 
 export default function Dashboard() {
-  const { products, orders, isLoaded } = useComandaStore();
+  const { products, orders, categories, isLoaded } = useComandaStore();
 
   if (!isLoaded) return null;
 
@@ -112,7 +110,9 @@ export default function Dashboard() {
                   <div className="flex justify-between items-end">
                     <div>
                       <span className="font-bold text-sm block">{p.name}</span>
-                      <span className="text-[10px] uppercase tracking-wider text-muted-foreground">{categories.find(c => c.id === p.category)?.name}</span>
+                      <span className="text-[10px] uppercase tracking-wider text-muted-foreground">
+                        {categories.find(c => c.id === p.category)?.name || 'General'}
+                      </span>
                     </div>
                     <span className="text-sm font-mono text-primary font-bold">{p.stock} un.</span>
                   </div>
