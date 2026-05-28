@@ -1,10 +1,8 @@
-
 "use client"
 
 import { AppShell } from "@/components/layout/app-shell";
 import { useComandaStore } from "@/lib/store";
 import { 
-  Package, 
   CreditCard, 
   AlertCircle,
   TrendingUp,
@@ -15,7 +13,7 @@ import Link from 'next/link';
 import { cn } from "@/lib/utils";
 
 export default function Dashboard() {
-  const { products, orders, isLoaded } = useComandaStore();
+  const { products, orders, categories, isLoaded } = useComandaStore();
 
   if (!isLoaded) return null;
 
@@ -27,7 +25,7 @@ export default function Dashboard() {
     <AppShell>
       <div className="space-y-10">
         <header>
-          <h2 className="text-4xl font-black tracking-tighter uppercase italic mb-1">Resumen Operativo</h2>
+          <h2 className="text-4xl font-black tracking-tighter uppercase mb-1">Resumen Operativo</h2>
           <p className="text-muted-foreground text-sm font-medium">Control en tiempo real de MonsterShop.</p>
         </header>
 
@@ -61,8 +59,11 @@ export default function Dashboard() {
             <div className="space-y-2">
               {products.slice(0, 4).map(p => (
                 <div key={p.id} className="flex justify-between items-center bg-white/[0.03] border border-white/5 p-4 rounded-xl">
-                  <span className="text-sm font-bold">{p.name}</span>
-                  <span className={p.stock <= p.minStock ? "text-destructive font-black" : "text-primary font-black"}>
+                  <div>
+                    <span className="text-sm font-bold block">{p.name}</span>
+                    <span className="text-[10px] uppercase tracking-wider text-muted-foreground">{categories.find(c => c.id === p.category)?.name}</span>
+                  </div>
+                  <span className={cn("text-sm font-mono font-bold", p.stock <= p.minStock ? "text-destructive" : "text-primary")}>
                     {p.stock} U.
                   </span>
                 </div>
@@ -83,7 +84,7 @@ export default function Dashboard() {
                     <p className="text-sm font-bold">{o.customerName}</p>
                     <p className="text-[9px] text-muted-foreground uppercase font-black">{o.reference || 'Sin Ref'}</p>
                   </div>
-                  <span className={o.status === 'paid' ? "text-primary font-black" : "text-yellow-500 font-black"}>
+                  <span className={cn("font-bold", o.status === 'paid' ? "text-primary" : "text-yellow-500")}>
                     ${o.totalAmount.toLocaleString()}
                   </span>
                 </div>

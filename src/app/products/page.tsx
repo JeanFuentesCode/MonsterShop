@@ -1,10 +1,9 @@
-
 "use client"
 
 import React, { useState } from 'react';
 import { AppShell } from "@/components/layout/app-shell";
 import { useComandaStore, Product } from "@/lib/store";
-import { Plus, Search, Trash2, Package, Box } from "lucide-react";
+import { Plus, Search, Trash2, Box } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -45,7 +44,7 @@ export default function ProductsPage() {
       <div className="space-y-8">
         <header className="flex flex-col md:flex-row md:items-end justify-between gap-4">
           <div>
-            <h2 className="text-3xl font-black uppercase tracking-tighter italic">Stock</h2>
+            <h2 className="text-3xl font-black uppercase tracking-tighter">Stock</h2>
             <p className="text-muted-foreground text-sm font-medium">Control técnico de inventario.</p>
           </div>
           <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -57,7 +56,7 @@ export default function ProductsPage() {
             </DialogTrigger>
             <DialogContent className="bg-black border-white/10 rounded-3xl">
               <DialogHeader>
-                <DialogTitle className="text-xl font-black uppercase italic">Nuevo Producto</DialogTitle>
+                <DialogTitle className="text-xl font-black uppercase">Nuevo Producto</DialogTitle>
               </DialogHeader>
               <div className="grid gap-6 py-4">
                 <div className="space-y-2">
