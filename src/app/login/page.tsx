@@ -1,3 +1,4 @@
+
 "use client"
 
 import React, { useState } from 'react';
@@ -7,7 +8,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Mail, Lock, Eye, EyeOff } from "lucide-react";
+import { Mail, Lock, Eye, EyeOff, Fingerprint, Loader2 } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 const GoogleIcon = () => (
   <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -28,29 +30,46 @@ export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [isBiometricLoading, setIsBiometricLoading] = useState(false);
+  const { toast } = useToast();
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
+    toast({
+      title: "Iniciando sesión",
+      description: "Conectando con MonsterShop Server...",
+    });
+  };
+
+  const handleBiometricLogin = () => {
+    setIsBiometricLoading(true);
+    // Simulación de autenticación biométrica
+    setTimeout(() => {
+      setIsBiometricLoading(false);
+      toast({
+        title: "Acceso biométrico detectado",
+        description: "Huella reconocida. Iniciando sesión...",
+      });
+    }, 1500);
   };
 
   return (
     <div className="min-h-screen bg-[#000000] flex flex-col items-center justify-center p-4 md:p-8">
-      <div className="w-full max-w-[400px] space-y-10">
-        <div className="flex flex-col items-center text-center space-y-4">
-          <div className="p-4 bg-primary/10 rounded-[2rem] border border-primary/20 shadow-[0_0_20px_rgba(34,197,94,0.1)]">
-            <Logo className="w-12 h-12 text-primary" />
+      <div className="w-full max-w-[400px] space-y-8">
+        <div className="flex flex-col items-center text-center space-y-4 mb-2">
+          <div className="p-4 bg-primary/5 rounded-[2.5rem] border border-primary/10 shadow-[0_0_30px_rgba(34,197,94,0.05)]">
+            <Logo className="w-14 h-14 text-primary" />
           </div>
-          <div className="space-y-1">
-            <h1 className="text-3xl font-black tracking-tighter uppercase text-white">MonsterShop</h1>
-            <p className="text-primary text-[10px] font-black uppercase tracking-[0.4em]">¡Hola, Bienvenido!</p>
-          </div>
+          <h1 className="text-3xl font-black tracking-tighter uppercase text-white">MonsterShop</h1>
         </div>
 
-        <Card className="border-border/50 bg-card/40 backdrop-blur-2xl rounded-[2.5rem] shadow-2xl overflow-hidden">
-          <CardHeader className="pt-8 pb-4 text-center">
-            <CardTitle className="text-xl font-black uppercase text-foreground">Identifícate</CardTitle>
+        <Card className="border-border/40 bg-card/30 backdrop-blur-3xl rounded-[2.5rem] shadow-2xl overflow-hidden">
+          <CardHeader className="pt-10 pb-4 text-center">
+            <CardTitle className="text-xl font-black uppercase text-foreground tracking-tight">
+              ¡Hola! <span className="text-primary">Identifícate</span>
+            </CardTitle>
           </CardHeader>
-          <CardContent className="space-y-6 pb-10">
+          <CardContent className="space-y-6 pb-12 px-8">
             <form onSubmit={handleLogin} className="space-y-5">
               <div className="space-y-2">
                 <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Email Corporativo</Label>
@@ -90,9 +109,27 @@ export default function LoginPage() {
                 </div>
               </div>
 
-              <Button type="submit" className="w-full h-14 rounded-2xl bg-primary text-primary-foreground font-black uppercase tracking-widest text-xs shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all mt-4">
-                Entrar ahora
-              </Button>
+              <div className="flex flex-col gap-3 mt-6">
+                <Button type="submit" className="w-full h-14 rounded-2xl bg-primary text-primary-foreground font-black uppercase tracking-widest text-xs shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all">
+                  Entrar ahora
+                </Button>
+                
+                {/* Botón de Huella para móvil */}
+                <Button 
+                  type="button" 
+                  variant="outline"
+                  onClick={handleBiometricLogin}
+                  disabled={isBiometricLoading}
+                  className="w-full h-14 rounded-2xl border-primary/20 bg-primary/5 hover:bg-primary/10 font-black text-[10px] uppercase gap-3 transition-all active:scale-95"
+                >
+                  {isBiometricLoading ? (
+                    <Loader2 className="w-5 h-5 animate-spin text-primary" />
+                  ) : (
+                    <Fingerprint className="w-5 h-5 text-primary" />
+                  )}
+                  {isBiometricLoading ? "Verificando..." : "Acceso Biométrico"}
+                </Button>
+              </div>
             </form>
 
             <div className="relative py-4">
