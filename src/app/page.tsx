@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import Link from 'next/link';
+import { cn } from "@/lib/utils";
 
 export default function Dashboard() {
   const { products, orders, isLoaded } = useComandaStore();
@@ -111,5 +112,3 @@ function StatCard({ label, value, icon: Icon, color }: any) {
     </Card>
   );
 }
-
-const cn = (...classes: any[]) => classes.filter(Boolean).join(' ');
