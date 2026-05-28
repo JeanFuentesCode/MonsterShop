@@ -10,20 +10,18 @@ export type Product = {
   stock: number;
   minStock: number;
   category: string;
-  tags: string[];
-  ingredients?: string[];
 };
 
-export type OrderStatus = 'pending' | 'delivered' | 'paid';
+export type OrderStatus = 'pending' | 'paid';
 
 export type Order = {
   id: string;
   customerName: string;
+  reference: string;
   items: { productId: string; quantity: number; priceAtSale: number }[];
   totalAmount: number;
   status: OrderStatus;
   createdAt: string;
-  deliveredAt?: string;
   paidAt?: string;
 };
 
@@ -33,33 +31,20 @@ export type Category = {
 };
 
 const INITIAL_CATEGORIES: Category[] = [
-  { id: '1', name: 'Pastelería' },
-  { id: '2', name: 'Bebidas' },
-  { id: '3', name: 'Snacks' },
+  { id: '1', name: 'General' },
+  { id: '2', name: 'Premium' },
 ];
 
 const INITIAL_PRODUCTS: Product[] = [
   { 
     id: '1', 
-    name: 'Torta de Selva Negra', 
-    description: 'Deliciosa torta con chocolate, cerezas y crema.', 
-    price: 45000, 
-    stock: 5, 
-    minStock: 2, 
-    category: '1',
-    tags: ['repostería', 'chocolate'],
-    ingredients: ['Cacao', 'Cerezas', 'Crema de Leche']
-  },
-  { 
-    id: '2', 
-    name: 'Café Americano', 
-    description: 'Café de grano tostado premium.', 
-    price: 3500, 
-    stock: 50, 
-    minStock: 10, 
-    category: '2',
-    tags: ['bebida', 'caliente']
-  },
+    name: 'Producto Demo A', 
+    description: 'Descripción básica', 
+    price: 1500, 
+    stock: 10, 
+    minStock: 3, 
+    category: '1'
+  }
 ];
 
 export function useComandaStore() {
@@ -69,9 +54,9 @@ export function useComandaStore() {
   const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
-    const savedProducts = localStorage.getItem('cf_products');
-    const savedCategories = localStorage.getItem('cf_categories');
-    const savedOrders = localStorage.getItem('cf_orders');
+    const savedProducts = localStorage.getItem('ms_products');
+    const savedCategories = localStorage.getItem('ms_categories');
+    const savedOrders = localStorage.getItem('ms_orders');
 
     setProducts(savedProducts ? JSON.parse(savedProducts) : INITIAL_PRODUCTS);
     setCategories(savedCategories ? JSON.parse(savedCategories) : INITIAL_CATEGORIES);
@@ -81,9 +66,9 @@ export function useComandaStore() {
 
   useEffect(() => {
     if (isLoaded) {
-      localStorage.setItem('cf_products', JSON.stringify(products));
-      localStorage.setItem('cf_categories', JSON.stringify(categories));
-      localStorage.setItem('cf_orders', JSON.stringify(orders));
+      localStorage.setItem('ms_products', JSON.stringify(products));
+      localStorage.setItem('ms_categories', JSON.stringify(categories));
+      localStorage.setItem('ms_orders', JSON.stringify(orders));
     }
   }, [products, categories, orders, isLoaded]);
 
@@ -93,7 +78,6 @@ export function useComandaStore() {
 
   const addOrder = (o: Order) => {
     setOrders([...orders, o]);
-    // Automatically update stock
     o.items.forEach(item => {
       const product = products.find(p => p.id === item.productId);
       if (product) {
@@ -105,12 +89,10 @@ export function useComandaStore() {
   const updateOrderStatus = (orderId: string, status: OrderStatus) => {
     setOrders(orders.map(o => {
       if (o.id === orderId) {
-        const now = new Date().toISOString();
         return {
           ...o,
           status,
-          deliveredAt: status === 'delivered' ? now : o.deliveredAt,
-          paidAt: status === 'paid' ? now : o.paidAt,
+          paidAt: status === 'paid' ? new Date().toISOString() : undefined,
         };
       }
       return o;

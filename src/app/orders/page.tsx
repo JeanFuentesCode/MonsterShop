@@ -2,163 +2,155 @@
 
 import React, { useState } from 'react';
 import { AppShell } from "@/components/layout/app-shell";
-import { useComandaStore, Order, OrderStatus } from "@/lib/store";
-import { 
-  Plus, 
-  CheckCircle2, 
-  Clock, 
-  Banknote,
-  MoreVertical,
-  ChevronRight,
-  Filter
-} from "lucide-react";
+import { useComandaStore, Order } from "@/lib/store";
+import { Plus, CheckCircle2, Clock, Hash } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-
-const STATUS_LABELS: Record<OrderStatus, { label: string, color: string, icon: any }> = {
-  pending: { label: 'Pendiente', color: 'bg-muted text-muted-foreground', icon: Clock },
-  delivered: { label: 'Entregado', color: 'bg-primary text-primary-foreground', icon: ChevronRight },
-  paid: { label: 'Cobrado', color: 'bg-secondary text-secondary-foreground', icon: CheckCircle2 },
-};
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
 
 export default function OrdersPage() {
-  const { orders, updateOrderStatus, isLoaded, addOrder, products } = useComandaStore();
-  const [activeTab, setActiveTab] = useState<'all' | 'pending' | 'delivered' | 'paid'>('all');
+  const { orders, products, addOrder, updateOrderStatus, isLoaded } = useComandaStore();
+  const [isOpen, setIsOpen] = useState(false);
+  const [newOrder, setNewOrder] = useState({
+    customer: '',
+    reference: '',
+    productId: '',
+    qty: 1
+  });
 
   if (!isLoaded) return null;
 
-  const filteredOrders = orders.filter(o => activeTab === 'all' || o.status === activeTab);
+  const handleAdd = () => {
+    const product = products.find(p => p.id === newOrder.productId);
+    if (!product || !newOrder.customer) return;
 
-  const handleNewOrder = () => {
-    // Basic mock order for demonstration
-    if (products.length === 0) return;
-    const randomProduct = products[0];
-    const newOrder: Order = {
+    addOrder({
       id: `ORD-${Date.now().toString().slice(-4)}`,
-      customerName: `Cliente ${Math.floor(Math.random() * 100)}`,
-      items: [{ productId: randomProduct.id, quantity: 1, priceAtSale: randomProduct.price }],
-      totalAmount: randomProduct.price,
+      customerName: newOrder.customer,
+      reference: newOrder.reference || 'S/REF',
+      items: [{ productId: product.id, quantity: newOrder.qty, priceAtSale: product.price }],
+      totalAmount: product.price * newOrder.qty,
       status: 'pending',
       createdAt: new Date().toISOString(),
-    };
-    addOrder(newOrder);
+    });
+    setIsOpen(false);
   };
 
   return (
     <AppShell>
-      <div className="space-y-6 max-w-7xl mx-auto">
+      <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-3xl font-bold tracking-tight">Seguimiento de Pedidos</h2>
-            <p className="text-muted-foreground">Gestiona entregas y cobros de ventas a crédito.</p>
+            <h2 className="text-2xl font-bold">Pedidos</h2>
+            <p className="text-sm text-muted-foreground">Gestión de ventas y cobros.</p>
           </div>
-          <Button onClick={handleNewOrder} className="bg-primary text-primary-foreground gap-2">
-            <Plus className="w-5 h-5" />
-            Nuevo Pedido
-          </Button>
-        </div>
-
-        <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
-          {(['all', 'pending', 'delivered', 'paid'] as const).map((tab) => (
-            <Button
-              key={tab}
-              variant={activeTab === tab ? 'default' : 'outline'}
-              size="sm"
-              onClick={() => setActiveTab(tab)}
-              className="capitalize min-w-[100px]"
-            >
-              {tab === 'all' ? 'Todos' : tab === 'pending' ? 'Pendientes' : tab === 'delivered' ? 'Entregados' : 'Cobrados'}
-            </Button>
-          ))}
-        </div>
-
-        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-          {filteredOrders.length === 0 && (
-            <div className="col-span-full py-20 text-center border-2 border-dashed rounded-xl opacity-50">
-              <Clock className="w-12 h-12 mx-auto mb-4 text-muted" />
-              <p className="font-medium">No hay pedidos en esta categoría</p>
-            </div>
-          )}
-          
-          {filteredOrders.map((order) => (
-            <Card key={order.id} className="relative overflow-hidden group">
-              <div className={cn(
-                "absolute top-0 right-0 w-1 h-full",
-                STATUS_LABELS[order.status].color.split(' ')[0]
-              )} />
-              
-              <CardHeader className="flex flex-row items-start justify-between pb-2">
-                <div>
-                  <div className="text-xs font-mono text-muted-foreground">#{order.id}</div>
-                  <CardTitle className="text-lg pt-1">{order.customerName}</CardTitle>
+          <Dialog open={isOpen} onOpenChange={setIsOpen}>
+            <DialogTrigger asChild>
+              <Button className="bg-primary hover:bg-primary/90 text-black font-bold">
+                <Plus className="w-4 h-4 mr-2" />
+                Registrar
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="bg-black border-white/10">
+              <DialogHeader>
+                <DialogTitle>Nuevo Pedido</DialogTitle>
+              </DialogHeader>
+              <div className="space-y-4 py-4">
+                <div className="space-y-2">
+                  <Label>Cliente</Label>
+                  <Input 
+                    value={newOrder.customer} 
+                    onChange={e => setNewOrder({...newOrder, customer: e.target.value})}
+                    className="bg-white/5 border-white/10"
+                  />
                 </div>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="icon"><MoreVertical className="w-4 h-4" /></Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    <DropdownMenuItem onClick={() => updateOrderStatus(order.id, 'delivered')}>
-                      Marcar como Entregado
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => updateOrderStatus(order.id, 'paid')}>
-                      Marcar como Cobrado
-                    </DropdownMenuItem>
-                    <DropdownMenuItem className="text-destructive">Cancelar Pedido</DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </CardHeader>
-              
-              <CardContent className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <Badge className={cn("gap-1 py-1 px-3 shadow-none", STATUS_LABELS[order.status].color)}>
-                    {React.createElement(STATUS_LABELS[order.status].icon, { className: "w-3 h-3" })}
-                    {STATUS_LABELS[order.status].label}
-                  </Badge>
-                  <div className="text-xl font-bold">${order.totalAmount.toLocaleString()}</div>
+                <div className="space-y-2">
+                  <Label>Referencia (Pago/Envío)</Label>
+                  <Input 
+                    placeholder="Ej: Transferencia #123"
+                    value={newOrder.reference} 
+                    onChange={e => setNewOrder({...newOrder, reference: e.target.value})}
+                    className="bg-white/5 border-white/10"
+                  />
                 </div>
-
-                <div className="space-y-2 text-sm">
-                  {order.items.map((item, idx) => {
-                    const product = products.find(p => p.id === item.productId);
-                    return (
-                      <div key={idx} className="flex justify-between text-muted-foreground">
-                        <span>{item.quantity}x {product?.name || 'Item'}</span>
-                        <span>${(item.priceAtSale * item.quantity).toLocaleString()}</span>
-                      </div>
-                    );
-                  })}
-                </div>
-
-                <div className="pt-2 border-t flex items-center justify-between text-[11px] text-muted-foreground">
-                  <div className="flex flex-col">
-                    <span>Creado: {new Date(order.createdAt).toLocaleDateString()}</span>
-                    {order.deliveredAt && <span>Entregado: {new Date(order.deliveredAt).toLocaleDateString()}</span>}
-                  </div>
-                  {order.status !== 'paid' && (
-                    <Button 
-                      size="sm" 
-                      variant="outline" 
-                      className="h-8 border-secondary text-secondary-foreground hover:bg-secondary/10"
-                      onClick={() => updateOrderStatus(order.id, order.status === 'pending' ? 'delivered' : 'paid')}
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label>Producto</Label>
+                    <select 
+                      className="w-full h-10 px-3 bg-white/5 border border-white/10 rounded-md text-sm"
+                      onChange={e => setNewOrder({...newOrder, productId: e.target.value})}
                     >
-                      {order.status === 'pending' ? 'Entregar' : 'Cobrar'}
-                    </Button>
-                  )}
+                      <option value="">Seleccionar...</option>
+                      {products.map(p => (
+                        <option key={p.id} value={p.id}>{p.name} (${p.price})</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Cantidad</Label>
+                    <Input 
+                      type="number" 
+                      value={newOrder.qty}
+                      onChange={e => setNewOrder({...newOrder, qty: Number(e.target.value)})}
+                      className="bg-white/5 border-white/10"
+                    />
+                  </div>
                 </div>
+              </div>
+              <DialogFooter>
+                <Button onClick={handleAdd} className="w-full bg-primary text-black font-bold">Crear Pedido</Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+        </div>
+
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          {orders.map(order => (
+            <Card key={order.id} className="bg-white/[0.02] border-white/10 group">
+              <CardHeader className="pb-2">
+                <div className="flex justify-between items-start">
+                  <div className="space-y-1">
+                    <p className="text-[10px] font-mono text-muted-foreground">{order.id}</p>
+                    <CardTitle className="text-base">{order.customerName}</CardTitle>
+                  </div>
+                  <Badge variant={order.status === 'paid' ? 'default' : 'outline'} className={order.status === 'paid' ? 'bg-primary text-black' : 'border-yellow-500 text-yellow-500'}>
+                    {order.status === 'paid' ? 'Pagado' : 'Pendiente'}
+                  </Badge>
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="flex items-center gap-2 text-[10px] text-muted-foreground bg-white/5 p-2 rounded">
+                  <Hash className="w-3 h-3" />
+                  <span className="uppercase">{order.reference}</span>
+                </div>
+                
+                <div className="flex justify-between items-end">
+                  <span className="text-xs text-muted-foreground">{new Date(order.createdAt).toLocaleDateString()}</span>
+                  <span className="text-lg font-bold text-primary">${order.totalAmount.toLocaleString()}</span>
+                </div>
+
+                {order.status === 'pending' && (
+                  <Button 
+                    className="w-full h-8 text-xs bg-white/10 hover:bg-primary hover:text-black border-none transition-all"
+                    onClick={() => updateOrderStatus(order.id, 'paid')}
+                  >
+                    Marcar como Pagado
+                  </Button>
+                )}
               </CardContent>
             </Card>
           ))}
+          {orders.length === 0 && (
+            <div className="col-span-full py-20 text-center border border-dashed border-white/10 rounded-xl">
+              <Clock className="w-8 h-8 mx-auto mb-2 opacity-20" />
+              <p className="text-sm text-muted-foreground">No hay pedidos registrados.</p>
+            </div>
+          )}
         </div>
       </div>
     </AppShell>
   );
 }
-
-const cn = (...classes: any[]) => classes.filter(Boolean).join(' ');
