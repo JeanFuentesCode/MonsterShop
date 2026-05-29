@@ -31,10 +31,10 @@ import {
 import { Label } from '@/components/ui/label';
 
 const initialOrders = [
-  { id: 'ORD-2024-X1', client: 'Taller Mecánico Alpha', amount: 4500.00, date: '2024-05-20', status: 'pending', quantity: 5 },
-  { id: 'ORD-2024-X2', client: 'Ferretería Central S.A.', amount: 12000.00, date: '2024-05-15', status: 'paid', quantity: 12 },
-  { id: 'ORD-2024-X3', client: 'Industrias Pesadas L4', amount: 8900.50, date: '2024-05-22', status: 'canceled', quantity: 2 },
-  { id: 'ORD-2024-X4', client: 'Constructor J.P. & Sons', amount: 21000.00, date: '2024-05-25', status: 'pending', quantity: 25 },
+  { id: 'PED-001', client: 'Juan García', amount: 120.50, date: '2024-05-20', status: 'pending', quantity: 3 },
+  { id: 'PED-002', client: 'María López', amount: 245.99, date: '2024-05-15', status: 'paid', quantity: 5 },
+  { id: 'PED-003', client: 'Carlos Mendez', amount: 89.50, date: '2024-05-22', status: 'canceled', quantity: 2 },
+  { id: 'PED-004', client: 'Sofia Rojas', amount: 350.75, date: '2024-05-25', status: 'pending', quantity: 7 },
 ];
 
 export default function OrdersPage() {
@@ -47,73 +47,73 @@ export default function OrdersPage() {
 
   return (
     <AppShell>
-      <div className="space-y-12">
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-8">
+      <div className="space-y-8">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
           <div>
-            <h1 className="text-5xl md:text-7xl font-black tracking-tighter uppercase italic leading-none">
+            <h1 className="text-4xl font-bold tracking-tight uppercase">
               Opera<span className="text-primary">ciones</span>
             </h1>
-            <p className="text-muted-foreground mt-3 font-bold uppercase tracking-[0.4em] text-xs">Facturación y Logística de Salida</p>
+            <p className="text-muted-foreground mt-2 font-medium uppercase tracking-widest text-xs">Facturación y Logística</p>
           </div>
           
           <Dialog>
             <DialogTrigger asChild>
-              <Button className="rounded-[1.5rem] h-16 px-10 font-black text-lg shadow-[0_15px_30px_rgba(34,197,94,0.2)] uppercase tracking-widest gap-4">
-                <Plus className="w-6 h-6" /> Nueva Orden
+              <Button className="rounded-lg h-12 px-8 font-semibold text-sm uppercase tracking-widest gap-2">
+                <Plus className="w-4 h-4" /> Nueva Orden
               </Button>
             </DialogTrigger>
-            <DialogContent className="glass border-white/10 max-w-lg rounded-[3rem] p-10">
+            <DialogContent className="border-border max-w-lg rounded-lg p-6">
               <DialogHeader>
-                <DialogTitle className="text-3xl font-black italic tracking-tighter uppercase text-primary">Sistema de Registro</DialogTitle>
+                <DialogTitle className="text-2xl font-bold uppercase text-primary">Nueva Orden</DialogTitle>
               </DialogHeader>
-              <div className="space-y-6 py-8">
+              <div className="space-y-4 py-6">
                 <div className="space-y-2">
-                  <Label className="text-[10px] uppercase font-black tracking-widest text-muted-foreground ml-2">Entidad del Cliente</Label>
-                  <Input placeholder="Ej. Corporación X" className="h-14 rounded-2xl bg-white/5 border-white/5 text-lg" />
+                  <Label className="text-xs uppercase font-semibold tracking-widest text-muted-foreground">Cliente</Label>
+                  <Input placeholder="Nombre de la empresa" className="h-10 rounded-lg bg-accent border-border text-sm" />
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label className="text-[10px] uppercase font-black tracking-widest text-muted-foreground ml-2">Compromiso Pago</Label>
-                    <Input type="date" className="h-14 rounded-2xl bg-white/5 border-white/5" />
+                    <Label className="text-xs uppercase font-semibold tracking-widest text-muted-foreground">Fecha</Label>
+                    <Input type="date" className="h-10 rounded-lg bg-accent border-border" />
                   </div>
                   <div className="space-y-2">
-                    <Label className="text-[10px] uppercase font-black tracking-widest text-muted-foreground ml-2">Unidades</Label>
-                    <Input type="number" placeholder="0" className="h-14 rounded-2xl bg-white/5 border-white/5 text-lg" />
+                    <Label className="text-xs uppercase font-semibold tracking-widest text-muted-foreground">Unidades</Label>
+                    <Input type="number" placeholder="0" className="h-10 rounded-lg bg-accent border-border text-sm" />
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <Label className="text-[10px] uppercase font-black tracking-widest text-muted-foreground ml-2">Valuación Total ($)</Label>
-                  <Input type="number" step="0.01" placeholder="0.00" className="h-14 rounded-2xl bg-white/5 border-white/5 text-xl font-black italic" />
+                  <Label className="text-xs uppercase font-semibold tracking-widest text-muted-foreground">Total ($)</Label>
+                  <Input type="number" step="0.01" placeholder="0.00" className="h-10 rounded-lg bg-accent border-border text-sm font-semibold" />
                 </div>
               </div>
               <DialogFooter>
-                <Button className="w-full h-16 rounded-2xl font-black text-xl uppercase tracking-widest">Ejecutar Orden</Button>
+                <Button className="w-full h-11 rounded-lg font-semibold text-sm uppercase tracking-widest">Crear Orden</Button>
               </DialogFooter>
             </DialogContent>
           </Dialog>
         </div>
 
-        <div className="flex flex-col gap-10">
-          <div className="flex flex-col md:flex-row gap-6 items-center">
-            <div className="relative flex-1 w-full group">
-              <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-muted-foreground w-5 h-5 group-focus-within:text-primary transition-colors" />
-              <Input placeholder="Buscar por ID de Orden, Cliente o RFC..." className="pl-16 h-16 rounded-[1.5rem] bg-card border-white/5 text-lg font-bold" />
+        <div className="flex flex-col gap-6">
+          <div className="flex flex-col md:flex-row gap-4 items-center">
+            <div className="relative flex-1 w-full">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground w-4 h-4" />
+              <Input placeholder="Buscar orden..." className="pl-12 h-11 rounded-lg bg-accent border-border text-sm" />
             </div>
-            <Button variant="outline" className="h-16 rounded-[1.5rem] gap-3 border-white/5 px-8 font-black uppercase tracking-widest bg-white/[0.02] hover:bg-white/5">
-              <Filter className="w-5 h-5" /> Config. Vista
+            <Button variant="outline" className="h-11 rounded-lg gap-2 border-border px-6 font-semibold text-sm uppercase tracking-widest">
+              <Filter className="w-4 h-4" /> Filtrar
             </Button>
           </div>
 
           <Tabs defaultValue="all" className="w-full" onValueChange={setActiveTab}>
-            <TabsList className="bg-white/[0.03] p-2 h-20 rounded-[2rem] border border-white/5 grid grid-cols-4 w-full md:max-w-3xl">
-              <TabsTrigger value="all" className="rounded-[1.5rem] data-[state=active]:bg-primary data-[state=active]:text-black font-black uppercase tracking-widest text-xs">Todos</TabsTrigger>
-              <TabsTrigger value="pending" className="rounded-[1.5rem] data-[state=active]:bg-yellow-500/20 data-[state=active]:text-yellow-500 font-black uppercase tracking-widest text-xs">Pendientes</TabsTrigger>
-              <TabsTrigger value="paid" className="rounded-[1.5rem] data-[state=active]:bg-primary/20 data-[state=active]:text-primary font-black uppercase tracking-widest text-xs">Pagados</TabsTrigger>
-              <TabsTrigger value="canceled" className="rounded-[1.5rem] data-[state=active]:bg-red-500/20 data-[state=active]:text-red-500 font-black uppercase tracking-widest text-xs">Cancelados</TabsTrigger>
+            <TabsList className="bg-accent p-1 h-12 rounded-lg border border-border grid grid-cols-4 w-full">
+              <TabsTrigger value="all" className="rounded-md data-[state=active]:bg-primary data-[state=active]:text-primary-foreground font-semibold uppercase text-xs">Todos</TabsTrigger>
+              <TabsTrigger value="pending" className="rounded-md data-[state=active]:bg-amber-500/20 data-[state=active]:text-amber-500 font-semibold uppercase text-xs">Pendientes</TabsTrigger>
+              <TabsTrigger value="paid" className="rounded-md data-[state=active]:bg-green-500/20 data-[state=active]:text-green-500 font-semibold uppercase text-xs">Pagados</TabsTrigger>
+              <TabsTrigger value="canceled" className="rounded-md data-[state=active]:bg-red-500/20 data-[state=active]:text-red-500 font-semibold uppercase text-xs">Cancelados</TabsTrigger>
             </TabsList>
 
-            <TabsContent value={activeTab} className="mt-12">
-              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-2 gap-8">
+            <TabsContent value={activeTab} className="mt-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {filteredOrders.map((order) => (
                   <OrderCard key={order.id} order={order} />
                 ))}
@@ -128,59 +128,59 @@ export default function OrdersPage() {
 
 function OrderCard({ order }: { order: any }) {
   const statusStyles = {
-    paid: { color: 'text-primary bg-primary/10', icon: CheckCircle2, label: 'VERIFICADO' },
-    pending: { color: 'text-yellow-500 bg-yellow-500/10', icon: Clock, label: 'EN COLA' },
-    canceled: { color: 'text-red-500 bg-red-500/10', icon: XCircle, label: 'RECHAZADO' },
+    paid: { color: 'text-green-500 bg-green-500/10', icon: CheckCircle2, label: 'Pagado' },
+    pending: { color: 'text-amber-500 bg-amber-500/10', icon: Clock, label: 'Pendiente' },
+    canceled: { color: 'text-red-500 bg-red-500/10', icon: XCircle, label: 'Cancelado' },
   }[order.status as 'paid' | 'pending' | 'canceled'];
 
   const StatusIcon = statusStyles.icon;
 
   return (
-    <Card className="border-none glass hover:border-primary/30 transition-all rounded-[2.5rem] overflow-hidden group p-8 space-y-8">
-      <div className="flex justify-between items-center">
-        <Badge className={`${statusStyles.color} border-none px-4 py-2 rounded-xl font-black uppercase text-[10px] tracking-[0.2em]`}>
-          <StatusIcon className="w-3 h-3 mr-2" /> {statusStyles.label}
+    <Card className="border-border bg-card hover:border-primary/50 transition-all rounded-lg overflow-hidden p-6 space-y-4">
+      <div className="flex justify-between items-start">
+        <Badge className={`${statusStyles.color} border-none px-3 py-1 rounded-md font-semibold uppercase text-xs tracking-widest`}>
+          <StatusIcon className="w-3 h-3 mr-2 inline" /> {statusStyles.label}
         </Badge>
         <div className="flex items-center gap-2 text-muted-foreground font-mono text-xs">
           <Hash className="w-3 h-3" />
-          <span className="font-bold tracking-widest uppercase">{order.id}</span>
+          <span className="font-medium tracking-widest">{order.id}</span>
         </div>
       </div>
 
-      <div className="space-y-2">
-        <p className="text-[10px] text-primary font-black uppercase tracking-[0.4em]">Entidad de Destino</p>
-        <h3 className="text-3xl font-black italic truncate group-hover:text-primary transition-colors tracking-tighter uppercase">
+      <div className="space-y-1">
+        <p className="text-xs text-primary font-semibold uppercase tracking-widest">Cliente</p>
+        <h3 className="text-lg font-semibold truncate text-foreground">
           {order.client}
         </h3>
       </div>
 
-      <div className="grid grid-cols-2 gap-8 py-6 border-y border-white/5">
-        <div className="space-y-2">
-          <p className="text-[10px] text-muted-foreground font-black uppercase tracking-widest flex items-center gap-2">
-            <Calendar className="w-3 h-3 text-primary" /> Fecha de Pago
+      <div className="grid grid-cols-2 gap-4 py-4 border-y border-border">
+        <div className="space-y-1">
+          <p className="text-xs text-muted-foreground font-semibold uppercase tracking-widest flex items-center gap-1">
+            <Calendar className="w-3 h-3" /> Fecha
           </p>
-          <p className="text-xl font-black italic">{order.date}</p>
+          <p className="text-sm font-medium">{order.date}</p>
         </div>
-        <div className="space-y-2 text-right">
-          <p className="text-[10px] text-muted-foreground font-black uppercase tracking-widest flex items-center justify-end gap-2">
-            <Activity className="w-3 h-3 text-primary" /> Volumen
+        <div className="space-y-1 text-right">
+          <p className="text-xs text-muted-foreground font-semibold uppercase tracking-widest flex items-center justify-end gap-1">
+            <Activity className="w-3 h-3" /> Unidades
           </p>
-          <p className="text-xl font-black italic">{order.quantity} Unidades</p>
+          <p className="text-sm font-medium">{order.quantity}</p>
         </div>
       </div>
 
       <div className="flex items-end justify-between">
         <div>
-          <p className="text-[10px] text-primary font-black uppercase tracking-[0.3em] mb-1">Valuación de Orden</p>
-          <p className="text-4xl font-black italic text-foreground tracking-tighter">${order.amount.toLocaleString()}</p>
+          <p className="text-xs text-primary font-semibold uppercase tracking-widest mb-1">Total</p>
+          <p className="text-2xl font-bold text-foreground">${order.amount.toLocaleString()}</p>
         </div>
         <div className="flex gap-2">
-           <Button variant="ghost" size="icon" className="rounded-2xl w-14 h-14 bg-white/5">
-            <MoreVertical className="w-6 h-6" />
+           <Button variant="ghost" size="icon" className="rounded-lg w-10 h-10">
+            <MoreVertical className="w-4 h-4" />
           </Button>
           {order.status === 'pending' && (
-            <Button className="rounded-2xl h-14 px-8 font-black uppercase tracking-widest gap-3 hover:scale-[1.05] transition-all">
-              <CreditCard className="w-5 h-5" /> COBRAR
+            <Button className="rounded-lg h-10 px-6 font-semibold uppercase tracking-widest text-sm gap-2">
+              <CreditCard className="w-4 h-4" /> Cobrar
             </Button>
           )}
         </div>

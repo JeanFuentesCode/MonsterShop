@@ -51,29 +51,42 @@
 
 @layer base {
   * { @apply border-border; }
-  body { @apply bg-background text-foreground antialiased selection:bg-primary/30; }
+  body { 
+    @apply bg-background text-foreground antialiased selection:bg-primary/30;
+    scroll-behavior: smooth;
+  }
+}
+
+/* Page transitions */
+main {
+  animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 .glass { @apply bg-card/50 backdrop-blur-md border border-border; }
 
-@keyframes robot-float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-12px); }
+/* Smooth transitions */
+button, a, [role="button"] {
+  transition: all 0.2s ease;
 }
 
-.animate-robot {
-  animation: robot-float 3s ease-in-out infinite;
+/* Reduced animations for better performance */
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes subtle-bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
+  }
+
+  .animate-bounce {
+    animation: subtle-bounce 2s ease-in-out infinite;
+  }
 }
 
-@keyframes levitate {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-4px); }
-}
-
-.hover-levitate {
-  transition: transform 0.3s ease;
-}
-
-.group:hover .hover-levitate {
-  animation: levitate 1.5s ease-in-out infinite;
-}

@@ -20,10 +20,10 @@ import { cn } from '@/lib/utils';
 import { LoadingRobot } from '@/components/loading-robot';
 
 const navItems = [
-  { name: 'Dashboard', href: '/', icon: LayoutDashboard },
+  { name: 'Panel de Control', href: '/panel-de-control', icon: LayoutDashboard },
   { name: 'Inventario', href: '/stock', icon: Package },
-  { name: 'Órdenes', href: '/orders', icon: ShoppingCart },
-  { name: 'Analíticas', href: '/analytics', icon: BarChart3 },
+  { name: 'Transacciones', href: '/transacciones', icon: ShoppingCart },
+  { name: 'Estadísticas', href: '/estadisticas', icon: BarChart3 },
 ];
 
 export function AppShell({ children }: { children: React.ReactNode }) {
@@ -34,8 +34,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     setIsLoading(true);
-    // Animación de robot extendida para simular sincronización pesada
-    const timer = setTimeout(() => setIsLoading(false), 2500);
+    const timer = setTimeout(() => setIsLoading(false), 1400);
     return () => clearTimeout(timer);
   }, [pathname]);
 
@@ -61,10 +60,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       {isLoading && <LoadingRobot />}
 
       {/* Sidebar Enterprise */}
-      <aside className="hidden md:flex flex-col w-64 bg-card border-r border-border transition-all duration-300">
-        <div className="p-8 h-24 flex items-center">
+      <aside className="hidden md:flex flex-col w-64 bg-slate-50 border-r border-slate-200 transition-all duration-300">
+        <div className="p-6 h-20 flex items-center border-b border-slate-200">
           <Link href="/" className="group">
-            <h1 className="font-black text-2xl tracking-tighter uppercase italic text-foreground">
+            <h1 className="font-black text-2xl tracking-tight uppercase text-slate-950">
               Monster<span className="text-primary">Shop</span>
             </h1>
           </Link>
@@ -76,13 +75,13 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             return (
               <Link key={item.href} href={item.href}>
                 <span className={cn(
-                  "group flex items-center justify-between px-4 py-3.5 rounded-xl text-sm font-bold transition-all duration-200",
+                  "group flex items-center justify-between px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200",
                   isActive 
-                    ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20" 
-                    : "text-muted-foreground hover:bg-accent hover:text-foreground"
+                    ? "bg-primary text-primary-foreground" 
+                    : "text-muted-foreground hover:bg-accent/50 hover:text-foreground"
                 )}>
                   <div className="flex items-center gap-3">
-                    <item.icon className={cn("w-5 h-5 hover-levitate", isActive ? "text-primary-foreground" : "text-primary/60 group-hover:text-primary")} />
+                    <item.icon className={cn("w-5 h-5", isActive ? "text-primary-foreground" : "text-primary/60 group-hover:text-primary")} />
                     <span>{item.name}</span>
                   </div>
                   {isActive && <ChevronRight className="w-4 h-4 opacity-50" />}
@@ -96,16 +95,16 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           <Button 
             variant="ghost" 
             onClick={toggleTheme}
-            className="w-full justify-start gap-3 h-11 rounded-xl text-muted-foreground hover:text-foreground"
+            className="w-full justify-start gap-3 h-10 rounded-lg text-muted-foreground hover:text-foreground text-sm"
           >
             {isDark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
-            <span className="text-[10px] font-black uppercase tracking-widest">{isDark ? 'Modo Claro' : 'Modo Oscuro'}</span>
+            <span className="text-xs font-medium uppercase tracking-widest">{isDark ? 'Claro' : 'Oscuro'}</span>
           </Button>
 
-          <Button variant="ghost" className="w-full justify-start gap-3 text-muted-foreground hover:text-destructive hover:bg-destructive/5 rounded-xl h-11" asChild>
+          <Button variant="ghost" className="w-full justify-start gap-3 text-muted-foreground hover:text-destructive hover:bg-destructive/5 rounded-lg h-10 text-sm" asChild>
             <Link href="/login">
               <LogOut className="w-4 h-4" />
-              <span className="text-[10px] font-black uppercase tracking-widest">Cerrar Sesión</span>
+              <span className="text-xs font-medium uppercase tracking-widest">Salir</span>
             </Link>
           </Button>
         </div>
@@ -113,10 +112,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
       <main className="flex-1 flex flex-col min-w-0 bg-background relative">
         {/* Mobile Header */}
-        <header className="md:hidden flex items-center justify-between px-6 h-20 bg-card border-b border-border">
-          <span className="font-black uppercase tracking-tighter italic text-xl">Monster<span className="text-primary">Shop</span></span>
+        <header className="md:hidden flex items-center justify-between px-6 h-16 bg-card border-b border-border">
+          <span className="font-bold uppercase tracking-tight text-lg">Monster<span className="text-primary">Shop</span></span>
           <Button variant="ghost" size="icon" onClick={() => setIsMobileMenuOpen(true)}>
-            <Menu className="w-6 h-6" />
+            <Menu className="w-5 h-5" />
           </Button>
         </header>
 
@@ -129,20 +128,20 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         {/* Mobile Nav */}
         {isMobileMenuOpen && (
           <div className="md:hidden fixed inset-0 z-[150] bg-background p-6 flex flex-col animate-in fade-in slide-in-from-top duration-300">
-            <div className="flex justify-between items-center mb-10">
-              <span className="text-2xl font-black uppercase italic tracking-tighter">Monster<span className="text-primary">Shop</span></span>
+            <div className="flex justify-between items-center mb-8">
+              <span className="text-xl font-bold uppercase tracking-tight">Monster<span className="text-primary">Shop</span></span>
               <Button variant="ghost" size="icon" onClick={() => setIsMobileMenuOpen(false)}>
-                <X className="w-8 h-8" />
+                <X className="w-6 h-6" />
               </Button>
             </div>
-            <nav className="space-y-3">
+            <nav className="space-y-2">
               {navItems.map((item) => (
                 <Link key={item.href} href={item.href} onClick={() => setIsMobileMenuOpen(false)}>
                   <span className={cn(
-                    "flex items-center gap-4 p-5 rounded-2xl text-lg font-black uppercase tracking-widest transition-all",
-                    pathname === item.href ? "bg-primary text-primary-foreground" : "bg-card border border-border text-muted-foreground"
+                    "flex items-center gap-3 p-4 rounded-lg text-sm font-medium transition-all",
+                    pathname === item.href ? "bg-primary text-primary-foreground" : "bg-card border border-border text-muted-foreground hover:bg-accent/50"
                   )}>
-                    <item.icon className="w-6 h-6" />
+                    <item.icon className="w-5 h-5" />
                     {item.name}
                   </span>
                 </Link>

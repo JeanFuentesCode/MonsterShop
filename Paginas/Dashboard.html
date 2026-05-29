@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Dashboard Interface</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        "colors": {
+                "outline-variant": "#494454",
+                "inverse-primary": "#6d3bd7",
+                "surface-tint": "#d0bcff",
+                "on-background": "#e2e2e2",
+                "secondary": "#c8c6c5",
+                "surface-bright": "#37393a",
+                "surface": "#121414",
+                "on-secondary": "#313030",
+                "background": "#000000",
+                "secondary-container": "#4a4949",
+                "tertiary-fixed": "#e5e2e1",
+                "secondary-fixed-dim": "#c8c6c5",
+                "secondary-fixed": "#e5e2e1",
+                "on-primary-fixed": "#23005c",
+                "error-container": "#93000a",
+                "on-tertiary-fixed-variant": "#474746",
+                "on-error-container": "#ffdad6",
+                "surface-dim": "#121414",
+                "primary-fixed": "#e9ddff",
+                "tertiary": "#c8c6c5",
+                "on-secondary-fixed": "#1c1b1b",
+                "primary-container": "#a078ff",
+                "outline": "#958ea0",
+                "surface-variant": "#333535",
+                "primary": "#8b5cf6",
+                "error": "#ffb4ab",
+                "on-primary-fixed-variant": "#5516be",
+                "on-secondary-container": "#bab8b7",
+                "on-tertiary-fixed": "#1b1b1c",
+                "inverse-surface": "#e2e2e2",
+                "on-tertiary-container": "#2a2a2a",
+                "tertiary-fixed-dim": "#c8c6c5",
+                "surface-container-lowest": "#0c0f0f",
+                "on-secondary-fixed-variant": "#474646",
+                "on-tertiary": "#303030",
+                "surface-container": "#1e2020",
+                "on-error": "#690005",
+                "inverse-on-surface": "#2f3131",
+                "surface-container-highest": "#333535",
+                "surface-container-high": "#282a2b",
+                "on-surface": "#e2e2e2",
+                "tertiary-container": "#929090",
+                "primary-fixed-dim": "#d0bcff",
+                "on-surface-variant": "#cbc3d7",
+                "on-primary-container": "#340080",
+                "on-primary": "#3c0091",
+                "surface-container-low": "#1a1c1c"
+        },
+        "fontFamily": {
+                "sans": ["Geist", "Inter", "sans-serif"]
+        }
+      }
+    }
+  }
+</script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
+<style data-purpose="custom-colors">
+    body {
+      background-color: #000000;
+      color: #e2e2e2;
+    }
+    .card-shadow {
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
+    }
+  </style>
+</head>
+<body class="flex h-screen overflow-hidden antialiased font-sans bg-black text-gray-200">
+<!-- BEGIN: Sidebar -->
+<aside class="w-64 bg-[#121414] border-r border-gray-800 flex flex-col h-full hidden md:flex" data-purpose="main-navigation">
+<!-- Logo -->
+<div class="h-20 flex items-center px-6 border-b border-gray-800">
+<div class="flex items-center gap-2">
+<img alt="MonsterShop Logo" class="h-8 object-contain" src="data:image/png;base64,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"/>
+</div>
+</div>
+<!-- Navigation Links -->
+<nav class="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
+<a class="flex items-center gap-3 px-4 py-3 bg-purple-600 text-white rounded-xl transition-colors" href="{{DATA:SCREEN:SCREEN_1}}">
+<i class="fa-solid fa-border-all w-5"></i>
+<span class="font-medium">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-gray-400 hover:bg-purple-900/30 hover:text-purple-400 rounded-xl transition-colors" href="{{DATA:SCREEN:SCREEN_144}}">
+<i class="fa-solid fa-chart-simple w-5"></i>
+<span class="font-medium">Statistics</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-gray-400 hover:bg-purple-900/30 hover:text-purple-400 rounded-xl transition-colors" href="{{DATA:SCREEN:SCREEN_143}}">
+<i class="fa-solid fa-money-bill-transfer w-5"></i>
+<span class="font-medium">Transaction</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-gray-400 hover:bg-purple-900/30 hover:text-purple-400 rounded-xl transition-colors" href="{{DATA:SCREEN:SCREEN_130}}">
+<i class="fa-solid fa-users w-5"></i>
+<span class="font-medium">My Team</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-gray-400 hover:bg-purple-900/30 hover:text-purple-400 rounded-xl transition-colors" href="{{DATA:SCREEN:SCREEN_147}}">
+<i class="fa-solid fa-file-invoice w-5"></i>
+<span class="font-medium">Sell Reports</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-gray-400 hover:bg-purple-900/30 hover:text-purple-400 rounded-xl transition-colors" href="{{DATA:SCREEN:SCREEN_78}}">
+<i class="fa-solid fa-gear w-5"></i>
+<span class="font-medium">Settings</span>
+</a>
+</nav>
+<!-- Sidebar Bottom Profile (Visible only on smaller screens if sidebar is toggled) -->
+<div class="p-4 border-t border-gray-800 lg:hidden">
+<div class="flex items-center gap-3">
+<img alt="Alayna Hossain" class="w-10 h-10 rounded-full border-2 border-gray-800 shadow-sm" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBsyW1_f5POPLFmDy5daPz3nMXlY1HeN1AqKnvfXnOb5J76w32XM10Ax9AXcUAlLSczWwD7yv5-d-A4_caBTsJv2zrifJccXlkX5VyiFaUutsJgr5TuG3arLhtLF8B8nggVrIj1kqlzWvlm8JIV0f7x__hSfQ3vghCf3yb0lbIz5c-AqIXyW78Nosx4pJlnJlx3ht-gHLlD4FWOvJtvnBZS5nP8O94MhAEnox-qpfGzpVt39ajIvRejrTn2PVihx3PSnM-NuE9Np_Q"/>
+<div>
+<p class="text-sm font-semibold text-white">Alayna Hossain</p>
+<p class="text-xs text-gray-400">Sales Manager</p>
+</div>
+</div>
+</div>
+</aside>
+<!-- END: Sidebar -->
+<!-- BEGIN: Main Content Area -->
+<main class="flex-1 flex flex-col h-full overflow-hidden bg-black">
+<!-- BEGIN: Top Header -->
+<header class="h-20 bg-black/80 backdrop-blur-md border-b border-gray-800 flex items-center justify-between px-6 lg:px-10 z-10 sticky top-0" data-purpose="top-header">
+<!-- Page Title & Date -->
+<div>
+<h1 class="text-2xl font-bold text-white">Dashboard</h1>
+<p class="text-sm text-gray-400 mt-1">14th Apr 2025</p>
+</div>
+<!-- Right Actions -->
+<div class="flex items-center gap-6">
+<!-- Icons -->
+<div class="flex items-center gap-3">
+<button class="w-10 h-10 rounded-full bg-gray-800 text-gray-300 flex items-center justify-center hover:bg-gray-700 transition">
+<i class="fa-regular fa-message"></i>
+</button>
+<button class="w-10 h-10 rounded-full bg-gray-800 text-gray-300 flex items-center justify-center hover:bg-gray-700 transition relative">
+<i class="fa-regular fa-bell"></i>
+<span class="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full"></span>
+</button>
+</div>
+<!-- User Profile (Desktop) -->
+<div class="hidden md:flex items-center gap-3 pl-6 border-l border-gray-800">
+<img alt="Alayna Hossain" class="w-10 h-10 rounded-full border border-gray-800" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBfi1K6tVmM9BXV7yvhp37Z07lw-25A6HtZsW__7XbAmQqFhBl0LKI6L74ubG_ZlmaB20cLEyxXrihXFFgQcBCOUhPuBt83wTKOAt63wafqWLBDR7_DCbAe7TvST0xPFuKsVKUoa9JouTt3pntAsAJyjcEXFYXcDfiaWRNsYVIo4E6jSNl-9jf3NqRFgYi2LnuB_zbiHshBAiIPrF6nZ3y5ckmSfJ3q5Im-IwjzMO8iSGkJAw3RGE6jF4sXAU2SYeyeVa8Zjr9Bw6E"/>
+<div class="text-right">
+<p class="text-sm font-semibold text-white leading-tight">Alayna Hossain</p>
+<p class="text-xs text-gray-400">Sales Manager</p>
+</div>
+</div>
+</div>
+</header>
+<!-- END: Top Header -->
+<!-- BEGIN: Scrollable Content -->
+<div class="flex-1 overflow-y-auto p-6 lg:p-10">
+<!-- Top Row: Metrics & Upgrade Card -->
+<div class="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-8">
+<!-- Metrics Column (Takes up 3/4) -->
+<div class="lg:col-span-3 grid grid-cols-1 md:grid-cols-3 gap-6">
+<!-- Total Earning -->
+<div class="bg-purple-900/30 border border-purple-800/50 rounded-2xl p-6 flex flex-col justify-between card-shadow">
+<div class="flex items-center gap-2 text-purple-300 mb-2">
+<div class="w-8 h-8 rounded-full bg-black/50 flex items-center justify-center">
+<i class="fa-solid fa-wallet text-sm"></i>
+</div>
+<span class="font-medium text-sm">Total Earning</span>
+</div>
+<div>
+<h2 class="text-3xl font-bold text-white">142.99K</h2>
+<p class="text-xs text-purple-400 mt-1">From the running month</p>
+</div>
+</div>
+<!-- Average Earning -->
+<div class="bg-purple-900/10 border border-purple-800/30 rounded-2xl p-6 flex flex-col justify-between card-shadow">
+<div class="flex items-center gap-2 text-purple-300 mb-2">
+<div class="w-8 h-8 rounded-full bg-black/50 flex items-center justify-center">
+<i class="fa-solid fa-chart-line text-sm"></i>
+</div>
+<span class="font-medium text-sm">Average Earning</span>
+</div>
+<div>
+<h2 class="text-3xl font-bold text-white">20.284K</h2>
+<p class="text-xs text-purple-400 mt-1">Daily Earning of this month</p>
+</div>
+</div>
+<!-- Conversation Rate -->
+<div class="bg-emerald-900/30 border border-emerald-800/50 rounded-2xl p-6 flex flex-col justify-between card-shadow">
+<div class="flex items-center gap-2 text-emerald-300 mb-2">
+<div class="w-8 h-8 rounded-full bg-black/50 flex items-center justify-center">
+<i class="fa-solid fa-chart-pie text-sm"></i>
+</div>
+<span class="font-medium text-sm">Conversation Rate</span>
+</div>
+<div>
+<h2 class="text-3xl font-bold text-white">74.86%</h2>
+<p class="text-xs text-emerald-400 mt-1 flex items-center gap-1">
+<i class="fa-solid fa-arrow-trend-up"></i>
+                +6.04% greater than last month
+              </p>
+</div>
+</div>
+</div>
+<!-- Upgrade Card Column (Takes up 1/4) -->
+<div class="lg:col-span-1">
+<div class="bg-teal-800 rounded-2xl p-6 text-white h-full relative overflow-hidden card-shadow flex flex-col justify-between border border-teal-700/50">
+<div class="z-10 relative">
+<h3 class="text-lg font-semibold mb-2">Upgrade to Pro</h3>
+<div class="flex items-baseline gap-1">
+<span class="text-2xl font-bold">$4.20</span>
+<span class="text-sm text-teal-200">/ Month</span>
+</div>
+<p class="text-xs text-teal-300 mt-1 mb-6">$50 Billed Annually</p>
+<button class="bg-green-500 text-teal-950 text-xs font-bold py-2 px-4 rounded-lg shadow-sm hover:bg-green-400 transition">
+                Upgrade Now
+              </button>
+</div>
+<!-- Decorative Icon -->
+<i class="fa-solid fa-laptop-code absolute bottom-[-10px] right-[-10px] text-7xl text-teal-600 opacity-50 z-0 transform rotate-[-15deg]"></i>
+</div>
+</div>
+</div>
+<!-- Middle Row: Charts & Small Cards -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+<!-- Regular Sell Chart -->
+<div class="lg:col-span-2 bg-[#121414] rounded-2xl p-6 card-shadow border border-gray-800">
+<div class="flex justify-between items-center mb-6">
+<h3 class="text-lg font-bold text-white">Regular Sell</h3>
+<button class="bg-green-900/50 text-green-400 border border-green-800/50 text-xs font-semibold px-3 py-1 rounded-md hover:bg-green-800/50 transition">Export</button>
+</div>
+<!-- Mockup Bar Chart Area -->
+<div class="h-48 flex items-end justify-between relative px-2">
+<!-- Y-Axis Labels -->
+<div class="absolute left-0 top-0 h-full flex flex-col justify-between text-xs text-gray-500 pb-6">
+<span class="">50k</span>
+<span class="">40k</span>
+<span class="">30k</span>
+<span class="">20k</span>
+</div>
+<!-- Grid Lines -->
+<div class="absolute left-8 right-0 top-0 h-full flex flex-col justify-between pb-6 z-0">
+<div class="w-full border-b border-dashed border-gray-800"></div>
+<div class="w-full border-b border-dashed border-gray-800"></div>
+<div class="w-full border-b border-dashed border-gray-800"></div>
+<div class="w-full border-b border-dashed border-gray-800"></div>
+</div>
+<!-- Bars container -->
+<div class="w-full pl-10 flex justify-around items-end h-[calc(100%-1.5rem)] z-10 gap-2">
+<!-- Sun -->
+<div class="flex items-end gap-1 w-full max-w-[30px] justify-center group">
+<div class="w-2 md:w-3 bg-purple-900/50 rounded-t-sm h-[30%] group-hover:bg-purple-800 transition-colors"></div>
+<div class="w-2 md:w-3 bg-teal-900/50 rounded-t-sm h-[45%] group-hover:bg-teal-800 transition-colors"></div>
+</div>
+<!-- Mon -->
+<div class="flex items-end gap-1 w-full max-w-[30px] justify-center group">
+<div class="w-2 md:w-3 bg-purple-900/50 rounded-t-sm h-[50%] group-hover:bg-purple-800 transition-colors"></div>
+<div class="w-2 md:w-3 bg-teal-900/50 rounded-t-sm h-[80%] group-hover:bg-teal-800 transition-colors"></div>
+</div>
+<!-- Tue -->
+<div class="flex items-end gap-1 w-full max-w-[30px] justify-center group">
+<div class="w-2 md:w-3 bg-purple-600 rounded-t-sm h-[90%] shadow-md"></div>
+<div class="w-2 md:w-3 bg-teal-500 rounded-t-sm h-[60%] shadow-md"></div>
+</div>
+<!-- Wed -->
+<div class="flex items-end gap-1 w-full max-w-[30px] justify-center group">
+<div class="w-2 md:w-3 bg-purple-900/50 rounded-t-sm h-[40%] group-hover:bg-purple-800 transition-colors"></div>
+<div class="w-2 md:w-3 bg-teal-900/50 rounded-t-sm h-[55%] group-hover:bg-teal-800 transition-colors"></div>
+</div>
+<!-- Thu -->
+<div class="flex items-end gap-1 w-full max-w-[30px] justify-center group">
+<div class="w-2 md:w-3 bg-purple-900/50 rounded-t-sm h-[60%] group-hover:bg-purple-800 transition-colors"></div>
+<div class="w-2 md:w-3 bg-teal-900/50 rounded-t-sm h-[30%] group-hover:bg-teal-800 transition-colors"></div>
+</div>
+<!-- Fri -->
+<div class="flex items-end gap-1 w-full max-w-[30px] justify-center group">
+<div class="w-2 md:w-3 bg-purple-900/50 rounded-t-sm h-[20%] group-hover:bg-purple-800 transition-colors"></div>
+<div class="w-2 md:w-3 bg-teal-900/50 rounded-t-sm h-[40%] group-hover:bg-teal-800 transition-colors"></div>
+</div>
+<!-- Sat -->
+<div class="flex items-end gap-1 w-full max-w-[30px] justify-center group">
+<div class="w-2 md:w-3 bg-purple-900/50 rounded-t-sm h-[85%] group-hover:bg-purple-800 transition-colors"></div>
+<div class="w-2 md:w-3 bg-teal-900/50 rounded-t-sm h-[70%] group-hover:bg-teal-800 transition-colors"></div>
+</div>
+</div>
+<!-- X-Axis Labels -->
+<div class="absolute bottom-0 left-10 w-[calc(100%-2.5rem)] flex justify-around text-xs text-gray-500">
+<span class="w-full text-center">Sun</span>
+<span class="w-full text-center text-purple-400 font-semibold">Mon</span>
+<span class="w-full text-center">Tue</span>
+<span class="w-full text-center">Wed</span>
+<span class="w-full text-center">Thu</span>
+<span class="w-full text-center">Fri</span>
+<span class="w-full text-center">Sat</span>
+</div>
+</div>
+</div>
+<!-- Right Side: More Analysis & Daily Meeting -->
+<div class="grid grid-cols-1 gap-6">
+<!-- More Analysis -->
+<div class="bg-[#121414] rounded-2xl p-6 card-shadow border border-gray-800 flex flex-col justify-between">
+<div>
+<h3 class="text-lg font-bold text-white">More Analysis</h3>
+<p class="text-xs text-gray-500 mb-4">There are more to view</p>
+<div class="space-y-3">
+<button class="w-full flex items-center justify-between p-3 rounded-xl border border-gray-800 hover:bg-gray-800/50 transition group">
+<div class="flex items-center gap-3 text-sm font-medium text-gray-300">
+<i class="fa-solid fa-chart-bar text-gray-500 group-hover:text-purple-400"></i>
+                    Store Sell Ration
+                  </div>
+<i class="fa-solid fa-chevron-right text-xs text-gray-600"></i>
+</button>
+<button class="w-full flex items-center justify-between p-3 rounded-xl border border-gray-800 hover:bg-gray-800/50 transition group">
+<div class="flex items-center gap-3 text-sm font-medium text-gray-300">
+<i class="fa-solid fa-trophy text-gray-500 group-hover:text-purple-400"></i>
+                    Top Item sold
+                  </div>
+<i class="fa-solid fa-chevron-right text-xs text-gray-600"></i>
+</button>
+</div>
+</div>
+<p class="text-xs text-gray-600 mt-4 text-center">
+              Analysis created by <span class="font-bold text-purple-400">MonsterShop</span>
+</p>
+</div>
+<!-- Daily Meeting -->
+<div class="bg-[#121414] rounded-2xl p-6 card-shadow border border-gray-800">
+<div class="flex items-center gap-2 mb-4">
+<div class="w-6 h-6 rounded-full bg-purple-900/50 text-purple-400 flex items-center justify-center text-xs">
+<i class="fa-regular fa-calendar"></i>
+</div>
+<h3 class="text-md font-bold text-white">Daily Meeting</h3>
+</div>
+<p class="text-xs text-gray-500 mb-3">12+ Person | 8:30 am</p>
+<div class="flex items-center gap-3 mb-4">
+<div class="flex -space-x-2">
+<img alt="Avatar" class="w-8 h-8 rounded-full border-2 border-[#121414]" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA5yNGAwadLdsquWISL84SvkJp73HWwA6hsF8h8qzphd6acf-RdGc8UyeKlrWySBwK4vu8Xap9f6MNVV3dhO4ybOQGPVZHNbBl-FXlNxhzS9mVEZvXpP9LQniYgIEBi9yyrBBAUNDgdzD18ZBKWF24s5uQpSD6nNSvyM0Z5rHc5htXgmGExJ_yj3YykYVVqfUNTJgEsVrahyNuy-3efFJleL0MZaVeJQR_fmzwn6sfSCG65i8zCc0AqOSEQ8xcrnpMG2wPNijgX5dA"/>
+<img alt="Avatar" class="w-8 h-8 rounded-full border-2 border-[#121414]" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAxcCgrT1FfR8W5V2LxxSi2SVmv2BKyZX5C0RxijA7c2WZn_D_gIgjnOiqoqMI5969hAQml3xghOolUvCaNT9RCPGzw1SRR1HdJ76WN88Ud2HaX3sWNWnfkpxexvjXAGvKfcbY15BewakCpi7mTHMGPyc-JdoI76hsqpWJUtJvFcQ4d2N13tz0BGuSSfRAZZW_YzTVlHlEzKfldbblltr_3c8cGHZ1gPwciNRIVlkLheE23gkURIet5OyEVORxjnB2lesSumZotgv8"/>
+<img alt="Avatar" class="w-8 h-8 rounded-full border-2 border-[#121414]" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBbtyI8a8liXNyBhwto9bL-z95GHgYrvwi_vEuZsMP4VQZzOIXhxiZfvm6KdH0c_bQeobZw7_1lIl1hlne-S44uByuFGK9ntSV3oiP7X9bMupSAVOdhsSYbWrhz4Ja06AkTwFxaJJhyDPEi2FrlIIg8Iu9RW3o_iw2wxi9mqzKRC_TR9sS56H2Z7ACGn_jIZcDh_Jihmmpr0tLJ_ALeqFd0DzYJSVOEVrdhBsYrzqkaF5FFqA3GYK1_6qiBZu2HWlnjDAv7Pmujj64"/>
+</div>
+<p class="text-xs text-gray-500 leading-tight">They will conduct<br/>the meeting</p>
+</div>
+<button class="w-full bg-gray-800 text-white text-xs font-semibold py-2 rounded-lg hover:bg-gray-700 transition border border-gray-700">
+              Click for meeting link
+            </button>
+</div>
+</div>
+</div>
+<!-- Bottom Row: Table & Team -->
+<div class="grid grid-cols-1 xl:grid-cols-3 gap-6 pb-6">
+<!-- Top Store Table -->
+<div class="xl:col-span-2 bg-[#121414] rounded-2xl p-6 card-shadow border border-gray-800 overflow-x-auto">
+<div class="flex justify-between items-center mb-6 min-w-[500px]">
+<h3 class="text-lg font-bold text-white">Top Store</h3>
+<button class="bg-green-900/50 text-green-400 border border-green-800/50 text-xs font-semibold px-3 py-1 rounded-md hover:bg-green-800/50 transition">Share</button>
+</div>
+<table class="w-full text-left border-collapse min-w-[500px]">
+<thead>
+<tr class="text-xs text-gray-500 border-b border-gray-800">
+<th class="pb-3 font-medium w-1/4">Store Name</th>
+<th class="pb-3 font-medium w-1/4">Location</th>
+<th class="pb-3 font-medium w-1/4">Sell</th>
+<th class="pb-3 font-medium w-1/4 text-right">Amount</th>
+</tr>
+</thead>
+<tbody class="text-sm">
+<tr class="border-b border-gray-800/50 last:border-0 hover:bg-gray-800/30 transition-colors">
+<td class="py-4 font-medium text-gray-200">Solaris Sparkle</td>
+<td class="py-4 text-gray-500">Miami, Florida</td>
+<td class="py-4 text-gray-500">102 Quantity</td>
+<td class="py-4 font-medium text-gray-200 text-right">10.80K</td>
+</tr>
+<tr class="border-b border-gray-800/50 last:border-0 hover:bg-gray-800/30 transition-colors">
+<td class="py-4 font-medium text-gray-200">Solaris Sparkle</td>
+<td class="py-4 text-gray-500">Miami, Florida</td>
+<td class="py-4 text-gray-500">102 Quantity</td>
+<td class="py-4 font-medium text-gray-200 text-right">10.80K</td>
+</tr>
+<tr class="border-b border-gray-800/50 last:border-0 hover:bg-gray-800/30 transition-colors">
+<td class="py-4 font-medium text-gray-200">Solaris Sparkle</td>
+<td class="py-4 text-gray-500">Miami, Florida</td>
+<td class="py-4 text-gray-500">102 Quantity</td>
+<td class="py-4 font-medium text-gray-200 text-right">10.80K</td>
+</tr>
+<tr class="border-b border-gray-800/50 last:border-0 hover:bg-gray-800/30 transition-colors">
+<td class="py-4 font-medium text-gray-200">Solaris Sparkle</td>
+<td class="py-4 text-gray-500">Miami, Florida</td>
+<td class="py-4 text-gray-500">102 Quantity</td>
+<td class="py-4 font-medium text-gray-200 text-right">10.80K</td>
+</tr>
+<tr class="border-b border-gray-800/50 last:border-0 hover:bg-gray-800/30 transition-colors">
+<td class="py-4 font-medium text-gray-200">Solaris Sparkle</td>
+<td class="py-4 text-gray-500">Miami, Florida</td>
+<td class="py-4 text-gray-500">102 Quantity</td>
+<td class="py-4 font-medium text-gray-200 text-right">10.80K</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Team Member List -->
+<div class="xl:col-span-1 bg-[#121414] rounded-2xl p-6 card-shadow border border-gray-800 flex flex-col h-full">
+<h3 class="text-lg font-bold text-white mb-4">Team Member</h3>
+<div class="flex-1 space-y-4 mb-4 overflow-y-auto pr-2">
+<!-- Member 1 -->
+<div class="flex items-center gap-3">
+<img alt="Member" class="w-10 h-10 rounded-full border border-gray-800" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC58pbtRhSjzlAgDD_HqHPvVCF6_RmnkqHYj1y0D3-3OqmIMSS_vibR7K8d4zhkQ30cb6Etlzd3CUdPqTonqwfrq_jcN2XVrg0RorUPSFKzBVLXhJu8D0z7xx_ODKjI7YSPA-Jn9M4qdC6k1AXXjjZH6ifII0hGFbWiVd5vbXUUVYS4pO_MEIw1DW7tycFyHD_MYz4tc-Qwm9Wc3HyPxZ8GqomXtrTNJjflasevLsECdvc-GZF_pmWNrDx-cwehyZ6ZB7VNrqwBwbs"/>
+<div>
+<p class="text-sm font-semibold text-gray-200">Al-Amin Hossain</p>
+<p class="text-xs text-gray-500">Project Manager</p>
+</div>
+</div>
+<!-- Member 2 -->
+<div class="flex items-center gap-3">
+<img alt="Member" class="w-10 h-10 rounded-full border border-gray-800" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBTYCnPL0ng0bj26o3Lk1wFpRGgeVBnSldtUo7ob3ih7vAGBiS0iFETO_cCRA96kEWz2_NZ9grEe2Mj8BsGzwNBXIoGCjZDT7p29rp3RUvyLBE-mZrEROfvyXqWei19B-kY4svh9pch7im2meoq14SsV5hpPAcsa2PlQkUsXVqR-CTuzSmseDNFGhsM62LWx_Qg4kE2bFBOBP0YC54J9byI_rsbkrm463Xvi_26LDgtclCMH7fNwgpLMuAuQJC_2M9lD2reG4Ub4JI"/>
+<div>
+<p class="text-sm font-semibold text-gray-200">Alayna Hossain</p>
+<p class="text-xs text-gray-500">Sales Manager</p>
+</div>
+</div>
+<!-- Member 3 -->
+<div class="flex items-center gap-3">
+<img alt="Member" class="w-10 h-10 rounded-full border border-gray-800" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBaI6Veibm-4eIVqoOviqmJxdVoce8PhrHz6Obi70YXJ8U818J0HtfPNDOk_Irt49tboJupvmypd3IV_q0lY4we4UrcaytnA8RjTjWo-rvj6WyFhJZvG8WMjWVYqMVNK86GebAddQTUjkRL_PFcE4eLbUoiWDAiZBd-UPgc8IsCJuH-djJUJo4VxP8R_ZJ1XGI3Ep-62q524TgIVjM7y1i9kVib3APoJCA65fQFAw2u5HvqXycBq_PMvUYZx4yfKluVP2NhotoK6dg"/>
+<div>
+<p class="text-sm font-semibold text-gray-200">Suraiya Sultana</p>
+<p class="text-xs text-gray-500">UI/UX Designer</p>
+</div>
+</div>
+<!-- Member 4 -->
+<div class="flex items-center gap-3">
+<img alt="Member" class="w-10 h-10 rounded-full border border-gray-800" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBZ3cmllNaDfO_1szZs-x2QbB7_qvdFdWVO4RV9-Q6L9K8pZALpTNpGMclxAadWFgKeMrODXJ-LZpQr0HcdrEHo2RWhzwfV-0aKi0DI5rr4yl_ThP9rBk5zyz7ttxir9s0cR5mK6683EGIz3vuk0uQbUIseDkifb_R2BFlo3JkRBZrJ6vXrKk7JuH5lC-vCLonnHlPF80nSwzG41LSi4iZ6esVeISYqH3WYpS3XXsy_WyLYzzd2mV8p5qfGY9wy-gKb4Pll4fI0chM"/>
+<div>
+<p class="text-sm font-semibold text-gray-200">Lamiya Akter</p>
+<p class="text-xs text-gray-500">Web Developer</p>
+</div>
+</div>
+</div>
+<button class="w-full flex items-center justify-center gap-2 py-3 bg-purple-900/20 text-purple-400 rounded-xl font-medium text-sm hover:bg-purple-900/40 transition mt-auto border border-purple-900/50 dashed">
+<i class="fa-solid fa-plus text-xs"></i> Add more member
+          </button>
+</div>
+</div>
+</div>
+<!-- END: Scrollable Content -->
+</main>
+<!-- END: Main Content Area -->
+</body></html>
