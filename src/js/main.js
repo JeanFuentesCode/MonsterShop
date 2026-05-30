@@ -1,7 +1,6 @@
 // src/js/main.js
 
-document.addEventListener('DOMContentLoaded', () => {
-    // Mobile menu toggle
+const runMobileMenuToggle = () => {
     const mobileMenuButton = document.querySelector('[data-purpose="mobile-menu-button"]');
     const mobileMenu = document.querySelector('[data-purpose="mobile-menu"]');
 
@@ -10,4 +9,10 @@ document.addEventListener('DOMContentLoaded', () => {
             mobileMenu.classList.toggle('hidden');
         });
     }
-});
+};
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', runMobileMenuToggle);
+} else {
+    runMobileMenuToggle();
+}
