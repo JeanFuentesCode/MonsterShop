@@ -44,3 +44,9 @@ next-env.d.ts
 firebase-debug.log
 firestore-debug.log
 
+# Legacy static files not used by the React app
+/Panel de control.html
+/src/html/
+/src/css/
+/src/js/tailwind.config.js
+

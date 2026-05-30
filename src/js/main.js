@@ -1,18 +1,2 @@
-// src/js/main.js
-
-const runMobileMenuToggle = () => {
-    const mobileMenuButton = document.querySelector('[data-purpose="mobile-menu-button"]');
-    const mobileMenu = document.querySelector('[data-purpose="mobile-menu"]');
-
-    if (mobileMenuButton && mobileMenu) {
-        mobileMenuButton.addEventListener('click', () => {
-            mobileMenu.classList.toggle('hidden');
-        });
-    }
-};
-
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', runMobileMenuToggle);
-} else {
-    runMobileMenuToggle();
-}
+// Legacy JS file no longer used by the React app.
+// The React version is implemented in src/AppRoot.jsx and src/components/*.
